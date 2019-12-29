@@ -7,11 +7,16 @@ import java.util.Map;
 
 public class CrossRank implements Serializable {
     private List<Person> runners;
+    private List<Race> races;
     private List<String> scoredMeets;
+
+    private long runnerIdCounter;
+    private long raceIdCounter;
 
     CrossRank() {
         runners = new ArrayList<>();
         scoredMeets = new ArrayList<>();
+        races = new ArrayList<>();
     }
 
     private void ScanMeets() {
@@ -31,17 +36,21 @@ public class CrossRank implements Serializable {
             System.out.println("Meet : " + meetId + " " + resultsId + " has already been scored");
             return;
         }
+
         scoredMeets.add(meetId + " " + resultsId);
 
-        List<Race> newRaces = Fetcher.GetRaces(meetId, resultsId);
+        List<Race> newRaces = Fetcher.GetRaces(meetId, resultsId, raceIdCounter);
+        raceIdCounter += newRaces.size();
 
         for (Race race : newRaces) {
+            races.add(race);
             List<Person> raceParticipants = new ArrayList<>();
             for (Result result : race.getResults()) {
                 Person runner = getPerson(result);
 
                 if (runner == null) {
-                    runner = new Person(result);
+                    runner = new Person(result, runnerIdCounter);
+                    runnerIdCounter++;
                     runners.add(runner);
                     System.out.println("New runner added!");
                 }
@@ -88,10 +97,15 @@ public class CrossRank implements Serializable {
         return null;
     }
 
+    public List<Person> getRunners() {
+        return runners;
+    }
+
     public static void main(String[] args) {
-        CrossRank crossRank = Serializer.LoadRankings();
+        CrossRank crossRank = CrossRankSerializer.LoadRankings();
         crossRank.ScanMeets();
-        crossRank.PrintRunners();
-        Serializer.SaveRankings(crossRank);
+        CrossRankSerializer.SaveRankings(crossRank);
+        CrossRankSerializer.SaveRunners(crossRank.runners);
+        CrossRankSerializer.SaveRaces(crossRank.races);
     }
 }

@@ -7,9 +7,8 @@ import java.util.regex.Pattern;
 
 public class Fetcher {
 
-    public static List<Race> GetRaces(int meetId, int resultsId) {
-        final String regex = "(?<!:)(?<=\\{)[\\\"\\w\\s:,\\.\\\\/\\-]{50,}(?=})";
-        String r = "(?<!:)(?<=\\{)[\\\"\\w\\s:,\\.\\\\]{30,}";
+    public static List<Race> GetRaces(int meetId, int resultsId, long raceIdCounter) {
+        final String regex = "(?<!:)(?<=\\{)[\"\\w\\s:,.\\\\/\\-]{50,}(?=})";
         String content;
 
         String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
@@ -37,7 +36,8 @@ public class Fetcher {
                 }
             }
             if (!added) {
-                Race newRace = new Race(result.getRaceName());
+                Race newRace = new Race(result.getRaceName(), raceIdCounter);
+                raceIdCounter++;
                 newRace.addResult(result);
                 races.add(newRace);
             }
@@ -47,6 +47,6 @@ public class Fetcher {
     }
 
     public static void main(String[] args) {
-        Fetcher.GetRaces(362828, 681528);
+        Fetcher.GetRaces(362828, 681528, 0);
     }
 }

@@ -1,14 +1,17 @@
 package com.crossrank.backend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Race {
+public class Race implements Serializable {
     private String raceName;
     private List<Result> results;
+    private final long id;
 
-    public Race(String raceName) {
+    public Race(String raceName, long id) {
         this.raceName = raceName;
+        this.id = id;
 
         results = new ArrayList<>();
     }
@@ -23,5 +26,9 @@ public class Race {
 
     public List<Result> getResults() {
         return results;
+    }
+
+    public long getId() {
+        return id;
     }
 }

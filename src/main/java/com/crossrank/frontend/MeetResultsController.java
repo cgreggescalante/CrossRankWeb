@@ -12,8 +12,8 @@ public class MeetResultsController {
 
     @CrossOrigin(origins = "http://localhost:9000")
     @GetMapping("/api/meet/results")
-    public Race race(@RequestParam(required = false, defaultValue = "363847") int meetId,
+    public Race race(@RequestParam(required = false, defaultValue = "363847") int raceId,
                      @RequestParam(required = false, defaultValue = "680009") int resultsId) {
-        return Fetcher.GetRaces(meetId, resultsId).get(0);
+        return Fetcher.GetRaces(raceId, resultsId, 0).get(0);
     }
 }

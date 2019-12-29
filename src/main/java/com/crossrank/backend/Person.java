@@ -14,10 +14,12 @@ public class Person implements Serializable {
 
     private int races;
     private int winLoss;
+    private final long id;
 
     private List<Result> results;
 
-    public Person(Result result) {
+    public Person(Result result, long id) {
+        this.id = id;
         results = new ArrayList<>();
         results.add(result);
 
@@ -66,5 +68,9 @@ public class Person implements Serializable {
     @Override
     public String toString() {
         return name + ' ' + (int) ranking;
+    }
+
+    public long getId() {
+        return id;
     }
 }
