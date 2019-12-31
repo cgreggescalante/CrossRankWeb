@@ -1,6 +1,7 @@
 package com.crossrank.backend;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Result implements Serializable {
     private String name;
@@ -10,16 +11,29 @@ public class Result implements Serializable {
 
     public Result(String data) {
         try {
-            String[] dataArray = data.substring(1, data.length() - 1).split("\",\"");
+            data = data.replaceAll("\"", "");
+            String[] dataArray = data.split(",");
 
-            name = dataArray[3].substring(12) + " " + dataArray[4].substring(11);
-            raceName = dataArray[6].substring(15) + " " + dataArray[7].substring(13);
-            genderName = dataArray[7].substring(13);
-            place = Integer.parseInt(dataArray[2].substring(8));
+            System.out.println(Arrays.toString(dataArray));
+            if (dataArray[0].substring(10).equals("5000m")) {
+                place = Integer.parseInt(dataArray[2].substring(6));
+                name = dataArray[3].substring(10) + " " + dataArray[4].substring(9);
+                raceName = dataArray[5].substring(9) + " " + dataArray[6].substring(13) + " " + dataArray[7].substring(11);
+                genderName = dataArray[7].substring(11);
+                genderName = genderName.replaceAll("\"", "");
+
+
+                if (!genderName.equalsIgnoreCase("boys") && !genderName.equalsIgnoreCase("girls")) {
+                    System.out.println(genderName + " " + Arrays.toString(dataArray) + dataArray[7]);
+                }
+            }
+
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
             System.out.println(data);
         }
+
+
     }
 
     public String getName() {

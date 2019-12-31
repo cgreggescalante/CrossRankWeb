@@ -9,6 +9,8 @@ public class CrossRankSerializer {
             FileInputStream file = new FileInputStream("src\\main\\resources\\rankings.txt");
             ObjectInputStream in = new ObjectInputStream(file);
 
+            System.out.println("loading rankings");
+
             CrossRank crossRank = (CrossRank) in.readObject();
 
             in.close();

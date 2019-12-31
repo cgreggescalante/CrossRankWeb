@@ -21,7 +21,10 @@ public class Fetcher {
         Matcher matcher = pattern.matcher(content);
 
         while (matcher.find()) {
-            results.add(new Result(matcher.group(0)));
+            Result result = new Result(matcher.group(0));
+            if (result.getName() != null) {
+                results.add(result);
+            }
         }
 
         List<Race> races = new ArrayList<>();

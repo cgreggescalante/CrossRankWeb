@@ -2,6 +2,7 @@ package com.crossrank.backend;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,6 @@ public class CrossRank implements Serializable {
                     runner = new Person(result, runnerIdCounter);
                     runnerIdCounter++;
                     runners.add(runner);
-                    System.out.println("New runner added!");
                 }
 
                 raceParticipants.add(runner);
@@ -80,6 +80,32 @@ public class CrossRank implements Serializable {
                 p.finalizeRanking();
             }
         }
+    }
+
+    public static Rankings GetRankings(int page, int pageLength, String sex) {
+        CrossRank crossRank = CrossRankSerializer.LoadRankings();
+
+        List<Person> sorted = new ArrayList<>();
+        Rankings rankings = new Rankings();
+
+        System.out.println(crossRank.runners.size());
+
+        crossRank.runners.sort(Comparator.comparing(Person::getRanking).reversed());
+        for (Person p : crossRank.runners) {
+            if (p.getGenderName().equalsIgnoreCase(sex)) {
+                sorted.add(p);
+            }
+        }
+
+        System.out.println(sorted.size());
+
+        for (int i = pageLength * page - pageLength; i < pageLength * page; i++) {
+            rankings.addRunner(sorted.get(i));
+        }
+
+        System.out.println(rankings.getRunners().size());
+
+        return rankings;
     }
 
     public void PrintRunners() {

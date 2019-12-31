@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <title>Rankings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/javascript/rankings.js"></script>
+
+    <style>
+        html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+    </style>
+
+    <body class="w3-light-grey">
+
+        <!-- Top container -->
+        <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+            <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+            <span class="w3-bar-item w3-right">Logo</span>
+        </div>
+
+        <!-- Sidebar/menu -->
+        <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+            <div class="w3-bar-block">
+                <a href="/rankings" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Rankings</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Views</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Traffic</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Geo</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-diamond fa-fw"></i>  Orders</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bell fa-fw"></i>  News</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bank fa-fw"></i>  General</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-history fa-fw"></i>  History</a>
+                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cog fa-fw"></i>  Settings</a><br><br>
+            </div>
+        </nav>
+
+        <!-- !PAGE CONTENT! -->
+        <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+            <div class="w3-container">
+                <label>
+                    <select id='sexInput' name="sex">
+                        <option value="Boys">Boys</option>
+                        <option value="Girls">Girls</option>
+                    </select>
+                </label>
+
+                <label>
+                    Results Per Page:
+                    <input id="pageLength" type="number" min=10 max=100 step=10 value=50>
+                </label>
+
+                <label>
+                    Page:
+                    <input id="page" type="number" min=1 max=100 step=1 value=1>
+                </label>
+
+                <input type="button" onclick="refreshRankings()" value="Submit">
+            </div>
+
+            <div id="rankingsTable" class="w3-center w3-container" style="max-width: 700px">
+
+            </div>
+
+        </div>
+
+        <script>
+            const sidebar = document.getElementById("mySidebar");
+
+            const overlayBg = document.getElementById("myOverlay");
+
+            function w3_open() {
+                if (sidebar.style.display === 'block') {
+                    sidebar.style.display = 'none';
+                    overlayBg.style.display = "none";
+                } else {
+                    sidebar.style.display = 'block';
+                    overlayBg.style.display = "block";
+                }
+            }
+
+            refreshRankings = function () {
+                let table = "<table class=\"w3-table w3-striped w3-white\">" +
+                    "<tr><td></td><td>Name</td><td>Rating</td><td>Identifier</td></tr>";
+
+                const xmlHttpRequest = new XMLHttpRequest();
+
+                xmlHttpRequest.onreadystatechange = function() {
+                    if (this.readyState === 4 && this.status === 200) {
+                        const response = JSON.parse(xmlHttpRequest.responseText)["runners"];
+                        for (let i = 0; i < response.length; i++) {
+                            const item = "<tr><td style='width: 10%'>" + (i+1) + "</td>" +
+                                "<td style='width: 40%;'>" + response[i]["name"] + "</td>" +
+                                "<td style='width: 35%; text-align: left;'>" + response[i]["ranking"] + "</td>" +
+                                "<td style='width: 15%; text-align: left;'>" + response[i]["id"] + "</td></tr>";
+                            table += item;
+                        }
+                        table += "</table>";
+                        document.getElementById('rankingsTable').innerHTML = table;
+                    }
+                };
+
+                const sex = document.getElementById('sexInput')["value"];
+                const pageLength = document.getElementById('pageLength')["value"];
+                const page = document.getElementById('page')["value"];
+
+                const url = "http://localhost:8080/api/runners/rankings?page=" + page + "&pageLength=" + pageLength + "&sex=" + sex;
+
+                xmlHttpRequest.open("GET", url, true);
+                xmlHttpRequest.send();
+            }
+        </script>
+
+    </body>
+
+</html>
