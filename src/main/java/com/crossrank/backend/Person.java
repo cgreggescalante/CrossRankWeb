@@ -53,24 +53,40 @@ public class Person implements Serializable {
         winLoss += i;
     }
 
-    public String getName() {
-        return name;
+    public void addResults(Result result) {
+        results.add(result);
     }
 
-    public double getRanking() {
-        return ranking;
+    public String getName() {
+        return name;
     }
 
     public String getGenderName() {
         return genderName;
     }
 
-    @Override
-    public String toString() {
-        return name + ' ' + (int) ranking;
+    public double getRanking() {
+        return ranking;
+    }
+
+    public int getRaces() {
+        return races;
+    }
+
+    public int getWinLoss() {
+        return winLoss;
     }
 
     public long getId() {
         return id;
+    }
+
+    public List<Result> getResults() {
+        return results;
+    }
+
+    @Override
+    public String toString() {
+        return name + ' ' + (int) ranking;
     }
 }

@@ -65,4 +65,22 @@ public class CrossRankSerializer {
             }
         }
     }
+
+    public static Person LoadRunner(int id) {
+        try {
+            FileInputStream file = new FileInputStream("src\\main\\resources\\runners\\" + id + ".txt");
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            Person runner = (Person) in.readObject();
+
+            in.close();
+            file.close();
+
+            return runner;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

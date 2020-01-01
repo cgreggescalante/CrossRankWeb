@@ -117,10 +117,15 @@ public class CrossRank implements Serializable {
     private Person getPerson(Result result) {
         for (Person p : runners) {
             if (p.getName().equals(result.getName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
+                p.addResults(result);
                 return p;
             }
         }
         return null;
+    }
+
+    public static Person GetPerson(int id) {
+        return CrossRankSerializer.LoadRunner(id);
     }
 
     public List<Person> getRunners() {
@@ -132,6 +137,6 @@ public class CrossRank implements Serializable {
         crossRank.ScanMeets();
         CrossRankSerializer.SaveRankings(crossRank);
         CrossRankSerializer.SaveRunners(crossRank.runners);
-        CrossRankSerializer.SaveRaces(crossRank.races);
+        //CrossRankSerializer.SaveRaces(crossRank.races);
     }
 }

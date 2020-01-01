@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class MeetCompiler {
 
     public static Map<Integer, List<Integer>> CompileMonth() {
-        String content = HttpRequester.Get("https://mn.milesplit.com/results?month=11&year=&level=hs");
+        String content = HttpRequester.Get("https://mn.milesplit.com/results?month=11&year=2019&level=hs");
 
         List<Integer> meetIds = GatherData(content);
 

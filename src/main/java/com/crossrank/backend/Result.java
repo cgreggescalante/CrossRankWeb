@@ -33,7 +33,6 @@ public class Result implements Serializable {
             System.out.println(data);
         }
 
-
     }
 
     public String getName() {
@@ -48,4 +47,7 @@ public class Result implements Serializable {
         return genderName;
     }
 
+    public int getPlace() {
+        return place;
+    }
 }
