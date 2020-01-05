@@ -1,5 +1,8 @@
 package com.crossrank.backend;
 
+import com.crossrank.backend.datatypes.Person;
+import com.crossrank.backend.datatypes.Race;
+
 import java.io.*;
 import java.util.List;
 

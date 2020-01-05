@@ -1,4 +1,4 @@
-package com.crossrank.backend;
+package com.crossrank.backend.datatypes;
 
 import java.io.Serializable;
 import java.util.ArrayList;

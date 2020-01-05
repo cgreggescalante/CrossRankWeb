@@ -1,5 +1,10 @@
 package com.crossrank.backend;
 
+import com.crossrank.backend.datatypes.Person;
+import com.crossrank.backend.datatypes.Race;
+import com.crossrank.backend.datatypes.Rankings;
+import com.crossrank.backend.datatypes.Result;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;

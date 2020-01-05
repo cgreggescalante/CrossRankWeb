@@ -1,7 +1,7 @@
 package com.crossrank.api;
 
 import com.crossrank.backend.Fetcher;
-import com.crossrank.backend.Race;
+import com.crossrank.backend.datatypes.Race;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

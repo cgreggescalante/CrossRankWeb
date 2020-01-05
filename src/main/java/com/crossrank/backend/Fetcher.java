@@ -1,5 +1,7 @@
 package com.crossrank.backend;
 
+import com.crossrank.backend.datatypes.Race;
+import com.crossrank.backend.datatypes.Result;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
