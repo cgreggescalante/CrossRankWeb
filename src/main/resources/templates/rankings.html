@@ -89,7 +89,7 @@
                         const response = JSON.parse(xmlHttpRequest.responseText)["runners"];
                         for (let i = 0; i < response.length; i++) {
                             const item = "<tr><td style='width: 10%'>" + (i+1) + "</td>" +
-                                "<td style='width: 40%;'>" + response[i]["name"] + "</td>" +
+                                "<td style='width: 40%;'>" + response[i]["fullName"] + "</td>" +
                                 "<td style='width: 35%; text-align: left;'>" + response[i]["ranking"] + "</td>" +
                                 "<td style='width: 15%; text-align: left;'>" + response[i]["id"] + "</td></tr>";
                             table += item;

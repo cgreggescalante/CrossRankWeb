@@ -108,12 +108,6 @@ public class CrossRank implements Serializable {
         return rankings;
     }
 
-    public void PrintRunners() {
-        for (Person p : runners) {
-            System.out.println(p);
-        }
-    }
-
     private Person getPerson(Result result) {
         for (Person p : runners) {
             if (p.getFullName().equals(result.getFullName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
@@ -124,8 +118,20 @@ public class CrossRank implements Serializable {
         return null;
     }
 
-    public static Person GetPerson(int id) {
-        return CrossRankSerializer.LoadRunner(id);
+    public static Person GetPerson(String name) {
+        int id = 0;
+
+        Person runner = CrossRankSerializer.LoadRunner(id);
+
+        while (runner != null) {
+            if (runner.getFullName().equalsIgnoreCase(name)) {
+                return runner;
+            }
+            id++;
+            runner = CrossRankSerializer.LoadRunner(id);
+        }
+        System.out.println("no runner found");
+        return new Person();
     }
 
     public List<Person> getRunners() {

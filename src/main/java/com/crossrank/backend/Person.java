@@ -35,6 +35,21 @@ public class Person implements Serializable {
         opponentRankings = 0;
     }
 
+    public Person() {
+        this.id = -1;
+        results = null;
+
+        firstName = "No athlete by that name was found.";
+        lastName = null;
+        genderName = null;
+
+        ranking = -1;
+        tempRanking = -1;
+        races = -1;
+        winLoss = -1;
+        opponentRankings = -1;
+    }
+
     public void updateRanking() {
         tempRanking = (opponentRankings + 400 * winLoss) / races;
     }

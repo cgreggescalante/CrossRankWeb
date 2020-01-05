@@ -1,4 +1,4 @@
-package com.crossrank.frontend;
+package com.crossrank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

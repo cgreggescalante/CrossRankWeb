@@ -1,4 +1,4 @@
-package com.crossrank.frontend;
+package com.crossrank.api;
 
 import com.crossrank.backend.Fetcher;
 import com.crossrank.backend.Race;

@@ -1,4 +1,4 @@
-package com.crossrank.frontend;
+package com.crossrank.api;
 
 import com.crossrank.backend.CrossRank;
 import com.crossrank.backend.Rankings;

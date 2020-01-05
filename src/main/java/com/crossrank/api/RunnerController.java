@@ -1,4 +1,4 @@
-package com.crossrank.frontend;
+package com.crossrank.api;
 
 import com.crossrank.backend.CrossRank;
 import com.crossrank.backend.Person;
@@ -12,7 +12,7 @@ public class RunnerController {
 
     @CrossOrigin(origins = "http://localhost:9000")
     @GetMapping("/api/runners")
-    public Person person(@RequestParam(required = false, defaultValue = "0") int id) {
-        return CrossRank.GetPerson(id);
+    public Person person(@RequestParam(required = false, defaultValue = "Conor Gregg Escalante") String name) {
+        return CrossRank.GetPerson(name);
     }
 }

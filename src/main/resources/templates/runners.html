@@ -38,8 +38,8 @@
         <div class="w3-main" style="margin-left:300px;margin-top:43px;">
             <div class="w3-container">
                 <label>
-                    Id:
-                    <input id="runnerId" type="number" min="0">
+                    Name:
+                    <input id="nameEntry" type="text">
                 </label>
 
                 <input type="button" onclick="getRunner()" value="Submit">
@@ -47,6 +47,7 @@
 
             <div class="w3-container">
                 <header id="runnerName"></header>
+                <header id="runnerRank"></header>
 
             </div>
 
@@ -88,21 +89,26 @@
                 xmlHttpRequest.onreadystatechange = function () {
                     if (this.readyState === 4 && this.status === 200) {
                         const response = JSON.parse(xmlHttpRequest.responseText);
-                        console.log(response["results"][0]);
-                        document.getElementById("runnerName").innerText = response["name"];
-                        for (let i = 0; i < response["results"].length; i++) {
-                            const item = "<tr><td style='width: 90%'>" + response["results"][i]["raceName"] + "</td>" +
-                                "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td></tr>";
-                            table += item;
+                        if (response["lastName"] == null) {
+                            document.getElementById("runnerName").innerText = "No runner by that name found.";
+                        } else {
+
+                            document.getElementById("runnerName").innerText = response["fullName"];
+                            document.getElementById("runnerRank").innerText = response["ranking"];
+                            for (let i = 0; i < response["results"].length; i++) {
+                                const item = "<tr><td style='width: 90%'>" + response["results"][i]["meetName"] + "</td>" +
+                                    "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td></tr>";
+                                table += item;
+                            }
+                            table += "</table>";
+                            document.getElementById("resultsTable").innerHTML = table;
                         }
-                        table += "</table>";
-                        document.getElementById("resultsTable").innerHTML = table;
                     }
                 };
 
-                const identifier = document.getElementById("runnerId")["value"];
+                const name = document.getElementById("nameEntry")["value"];
 
-                const url = "http://localhost:8080/api/runners?id=" + identifier;
+                const url = "http://localhost:8080/api/runners?name=" + name;
 
                 xmlHttpRequest.open("GET", url, true);
                 xmlHttpRequest.send();
