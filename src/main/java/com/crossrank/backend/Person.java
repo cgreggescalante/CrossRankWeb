@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements Serializable {
-    private String name;
+    private String firstName;
+    private String lastName;
     private String genderName;
 
     private double ranking;
@@ -23,7 +24,8 @@ public class Person implements Serializable {
         results = new ArrayList<>();
         results.add(result);
 
-        name = result.getName();
+        firstName = result.getFirstName();
+        lastName = result.getLastName();
         genderName = result.getGenderName();
 
         ranking = 1300;
@@ -57,8 +59,16 @@ public class Person implements Serializable {
         results.add(result);
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 
     public String getGenderName() {
@@ -83,10 +93,5 @@ public class Person implements Serializable {
 
     public List<Result> getResults() {
         return results;
-    }
-
-    @Override
-    public String toString() {
-        return name + ' ' + (int) ranking;
     }
 }

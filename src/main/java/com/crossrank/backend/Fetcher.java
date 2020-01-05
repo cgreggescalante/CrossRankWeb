@@ -1,30 +1,33 @@
 package com.crossrank.backend;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Fetcher {
 
     public static List<Race> GetRaces(int meetId, int resultsId, long raceIdCounter) {
-        final String regex = "(?<!:)(?<=\\{)[\"\\w\\s:,.\\\\/\\-]{50,}(?=})";
-        String content;
-
         String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
 
-        content = HttpRequester.Get(url);
+        String content = HttpRequester.Get(url);
         System.out.println(content);
 
         List<Result> results = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
 
-        while (matcher.find()) {
-            Result result = new Result(matcher.group(0));
-            if (result.getName() != null) {
+        try {
+            JSONObject jsonObject = (JSONObject) new JSONParser().parse(content);
+            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+
+            for (Object o : jsonArray) {
+                Result result = new Result((JSONObject) o);
                 results.add(result);
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         List<Race> races = new ArrayList<>();
@@ -32,14 +35,14 @@ public class Fetcher {
         for (Result result : results) {
             boolean added = false;
             for (Race race : races) {
-                if (result.getRaceName().equals(race.getRaceName())) {
+                if (result.getMeetName().equals(race.getRaceName())) {
                     race.addResult(result);
                     added = true;
                     break;
                 }
             }
             if (!added) {
-                Race newRace = new Race(result.getRaceName(), raceIdCounter);
+                Race newRace = new Race(result.getMeetName(), raceIdCounter);
                 raceIdCounter++;
                 newRace.addResult(result);
                 races.add(newRace);

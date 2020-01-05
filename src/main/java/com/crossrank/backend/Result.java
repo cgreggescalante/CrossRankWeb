@@ -1,53 +1,71 @@
 package com.crossrank.backend;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class Result implements Serializable {
-    private String name;
-    private String raceName;
+    private String eventCode;
+    private String gender;
+    private String place;
+    private String firstName;
+    private String lastName;
+    private String meetName;
+    private String divisionName;
     private String genderName;
-    private int place;
+    private String mark;
 
-    public Result(String data) {
-        try {
-            data = data.replaceAll("\"", "");
-            String[] dataArray = data.split(",");
-
-            System.out.println(Arrays.toString(dataArray));
-            if (dataArray[0].substring(10).equals("5000m")) {
-                place = Integer.parseInt(dataArray[2].substring(6));
-                name = dataArray[3].substring(10) + " " + dataArray[4].substring(9);
-                raceName = dataArray[5].substring(9) + " " + dataArray[6].substring(13) + " " + dataArray[7].substring(11);
-                genderName = dataArray[7].substring(11);
-                genderName = genderName.replaceAll("\"", "");
-
-
-                if (!genderName.equalsIgnoreCase("boys") && !genderName.equalsIgnoreCase("girls")) {
-                    System.out.println(genderName + " " + Arrays.toString(dataArray) + dataArray[7]);
-                }
-            }
-
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            System.out.println(data);
-        }
-
+    public Result(JSONObject data) {
+        eventCode = (String) data.get("eventCode");
+        gender = (String) data.get("gender");
+        place = (String) data.get("place");
+        firstName = (String) data.get("firstName");
+        lastName = (String) data.get("lastName");
+        meetName = (String) data.get("meetName");
+        divisionName = (String) data.get("divisionName");
+        genderName = (String) data.get("genderName");
+        mark = (String) data.get("mark");
     }
 
-    public String getName() {
-        return name;
+    public String getEventCode() {
+        return eventCode;
     }
 
-    public String getRaceName() {
-        return raceName;
+    public String getGender() {
+        return gender;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public String getMeetName() {
+        return meetName;
+    }
+
+    public String getDivisionName() {
+        return divisionName;
     }
 
     public String getGenderName() {
         return genderName;
     }
 
-    public int getPlace() {
-        return place;
+    public String getMark() {
+        return mark;
     }
 }

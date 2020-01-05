@@ -116,7 +116,7 @@ public class CrossRank implements Serializable {
 
     private Person getPerson(Result result) {
         for (Person p : runners) {
-            if (p.getName().equals(result.getName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
+            if (p.getFullName().equals(result.getFullName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
                 p.addResults(result);
                 return p;
             }
