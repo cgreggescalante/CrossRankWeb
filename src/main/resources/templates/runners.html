@@ -47,7 +47,7 @@
 
             <div class="w3-container">
                 <header id="runnerName"></header>
-                <header id="runnerRank"></header>
+                <header id="runnerRank">Ranking : </header>
 
             </div>
 
@@ -94,7 +94,7 @@
                         } else {
 
                             document.getElementById("runnerName").innerText = response["fullName"];
-                            document.getElementById("runnerRank").innerText = response["ranking"];
+                            document.getElementById("runnerRank").innerText = "Ranking : " + Math.round(response["ranking"]).toString(10);
                             for (let i = 0; i < response["results"].length; i++) {
                                 const item = "<tr><td style='width: 90%'>" + response["results"][i]["meetName"] + "</td>" +
                                     "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td></tr>";

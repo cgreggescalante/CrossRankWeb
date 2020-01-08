@@ -37,15 +37,17 @@ public class Fetcher {
         for (Result result : results) {
             boolean added = false;
             for (Race race : races) {
-                if (result.getMeetName().equals(race.getRaceName())) {
+                if (result.getMeetName().equals(race.getMeetName()) &&
+                    result.getGenderName().equals(race.getSex())) {
                     race.addResult(result);
                     added = true;
                     break;
                 }
             }
             if (!added) {
-                Race newRace = new Race(result.getMeetName(), raceIdCounter);
+                Race newRace = new Race(result, raceIdCounter);
                 raceIdCounter++;
+                System.out.println(newRace.getMeetName() + " " + newRace.getSex());
                 newRace.addResult(result);
                 races.add(newRace);
             }

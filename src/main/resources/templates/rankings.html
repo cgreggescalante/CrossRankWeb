@@ -14,7 +14,7 @@
         html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     </style>
 
-    <body class="w3-light-grey">
+    <body class="w3-light-grey" onload="refreshRankings()">
 
         <!-- Top container -->
         <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
@@ -37,27 +37,32 @@
         <div class="w3-main" style="margin-left:300px;margin-top:43px;">
 
             <div class="w3-container">
-                <label>
+                <label for='sexInput'>
                     <select id='sexInput' name="sex">
                         <option value="Boys">Boys</option>
                         <option value="Girls">Girls</option>
                     </select>
                 </label>
-
                 <label>
                     Results Per Page:
                     <input id="pageLength" type="number" min=10 max=100 step=10 value=50>
                 </label>
 
-                <label>
-                    Page:
-                    <input id="page" type="number" min=1 max=100 step=1 value=1>
-                </label>
+                <table>
+                    <tr>
+                        <th>Page:</th>
+                        <th><button onclick="pagedown()"><</button></th>
+                        <th><div id="pageNumber">1</div></th>
+                        <th><button onclick="pageup()">></button></th>
+                    </tr>
+                </table>
+
+                <input id="page" type="number" min=1 max=100 step=1 value=1>
 
                 <input type="button" onclick="refreshRankings()" value="Submit">
             </div>
 
-            <div id="rankingsTable" class="w3-center w3-container" style="max-width: 700px">
+            <div id="rankingsTable" class="w3-container" style="max-width: 700px">
 
             </div>
 
@@ -78,9 +83,17 @@
                 }
             }
 
+            pageup = function() {
+                const page_num = document.getElementById("")
+            };
+
+            pagedown = function() {
+
+            };
+
             refreshRankings = function () {
                 let table = "<table class=\"w3-table w3-striped w3-white\">" +
-                    "<tr><td></td><td>Name</td><td>Rating</td><td>Identifier</td></tr>";
+                    "<tr><td></td><td>Name</td><td>Rating</td</tr>";
 
                 const xmlHttpRequest = new XMLHttpRequest();
 
@@ -90,8 +103,7 @@
                         for (let i = 0; i < response.length; i++) {
                             const item = "<tr><td style='width: 10%'>" + (i+1) + "</td>" +
                                 "<td style='width: 40%;'>" + response[i]["fullName"] + "</td>" +
-                                "<td style='width: 35%; text-align: left;'>" + response[i]["ranking"] + "</td>" +
-                                "<td style='width: 15%; text-align: left;'>" + response[i]["id"] + "</td></tr>";
+                                "<td style='width: 35%; text-align: left;'>" + Math.round(response[i]["ranking"]) + "</td></tr>";
                             table += item;
                         }
                         table += "</table>";
