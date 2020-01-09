@@ -6,15 +6,14 @@ import com.crossrank.backend.datatypes.Rankings;
 import com.crossrank.backend.datatypes.Result;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CrossRank implements Serializable {
-    private List<Person> runners;
-    private List<Race> races;
-    private List<Integer> scoredMeets;
+    private final List<Person> runners;
+    private final List<Race> races;
+    private final List<Integer> scoredMeets;
+
+    private Map<String, Long> runnerDirectory;
 
     private long runnerIdCounter;
     private long raceIdCounter;
@@ -23,6 +22,8 @@ public class CrossRank implements Serializable {
         runners = new ArrayList<>();
         scoredMeets = new ArrayList<>();
         races = new ArrayList<>();
+
+        runnerDirectory = new HashMap<>();
     }
 
     private void ScanMeets() {
@@ -51,6 +52,7 @@ public class CrossRank implements Serializable {
 
                 if (runner == null) {
                     runner = new Person(result, runnerIdCounter);
+                    runnerDirectory.put(runner.getFullName(), runner.getId());
                     runnerIdCounter++;
                     runners.add(runner);
                 }
@@ -80,6 +82,8 @@ public class CrossRank implements Serializable {
                 p.finalizeRanking();
             }
         }
+
+        runnerDirectory = new TreeMap<>(runnerDirectory);
     }
 
     public static Rankings GetRankings(int page, int pageLength, String sex) {
@@ -113,23 +117,29 @@ public class CrossRank implements Serializable {
     }
 
     public static Person GetPerson(String name) {
-        int id = 0;
 
-        Person runner = CrossRankSerializer.LoadRunner(id);
+        Map<String, Long> runnerDirectory = CrossRankSerializer.LoadRunnerDirectory();
 
-        while (runner != null) {
-            if (runner.getFullName().equalsIgnoreCase(name)) {
-                return runner;
+        try {
+            if (runnerDirectory != null) {
+                long id = runnerDirectory.get(name);
+                return CrossRankSerializer.LoadRunner(id);
             }
-            id++;
-            runner = CrossRankSerializer.LoadRunner(id);
+        } catch (NullPointerException e) {
+            return new Person();
         }
-        System.out.println("no runner found");
+
         return new Person();
     }
 
+    @SuppressWarnings("unused")
     public List<Person> getRunners() {
         return runners;
+    }
+
+    @SuppressWarnings("unused")
+    public Map<String, Long> getRunnerDirectory() {
+        return runnerDirectory;
     }
 
     public static void main(String[] args) {
@@ -137,6 +147,7 @@ public class CrossRank implements Serializable {
         crossRank.ScanMeets();
         CrossRankSerializer.SaveRankings(crossRank);
         CrossRankSerializer.SaveRunners(crossRank.runners);
-        //CrossRankSerializer.SaveRaces(crossRank.races);
+        CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);
+        CrossRankSerializer.SaveRaces(crossRank.races);
     }
 }

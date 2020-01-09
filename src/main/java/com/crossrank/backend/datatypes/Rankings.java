@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rankings {
-    private List<Person> runners;
+    private final List<Person> runners;
 
     public Rankings() {
         runners = new ArrayList<>();
@@ -14,6 +14,7 @@ public class Rankings {
         runners.add(newRunner);
     }
 
+    @SuppressWarnings("unused")
     public List<Person> getRunners() {
         return runners;
     }

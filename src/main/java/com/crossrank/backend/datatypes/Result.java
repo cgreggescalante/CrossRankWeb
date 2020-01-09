@@ -1,21 +1,19 @@
 package com.crossrank.backend.datatypes;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.Serializable;
 
 public class Result implements Serializable {
-    private String eventCode;
-    private String gender;
-    private String place;
-    private String firstName;
-    private String lastName;
-    private String meetName;
-    private String divisionName;
-    private String genderName;
-    private String mark;
+    private final String eventCode;
+    private final String gender;
+    private final String place;
+    private final String firstName;
+    private final String lastName;
+    private final String meetName;
+    private final String divisionName;
+    private final String genderName;
+    private final String mark;
 
     public Result(JSONObject data) {
         eventCode = (String) data.get("eventCode");
@@ -29,14 +27,17 @@ public class Result implements Serializable {
         mark = (String) data.get("mark");
     }
 
+    @SuppressWarnings("unused")
     public String getEventCode() {
         return eventCode;
     }
 
+    @SuppressWarnings("unused")
     public String getGender() {
         return gender;
     }
 
+    @SuppressWarnings("unused")
     public String getPlace() {
         return place;
     }
@@ -65,6 +66,7 @@ public class Result implements Serializable {
         return genderName;
     }
 
+    @SuppressWarnings("unused")
     public String getMark() {
         return mark;
     }

@@ -4,7 +4,7 @@ import com.crossrank.backend.datatypes.Person;
 import com.crossrank.backend.datatypes.Race;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 public class CrossRankSerializer {
     public static CrossRank LoadRankings() {
@@ -69,7 +69,7 @@ public class CrossRankSerializer {
         }
     }
 
-    public static Person LoadRunner(int id) {
+    public static Person LoadRunner(long id) {
         try {
             FileInputStream file = new FileInputStream("src\\main\\resources\\runners\\" + id + ".txt");
             ObjectInputStream in = new ObjectInputStream(file);
@@ -80,6 +80,41 @@ public class CrossRankSerializer {
             file.close();
 
             return runner;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void SaveRunnerDirectory(Map<String, Long> runnerDirectory) {
+        for (String entry : runnerDirectory.keySet()) {
+            System.out.println(entry);
+        }
+
+        try {
+            FileOutputStream file = new FileOutputStream("src\\main\\resources\\runnerDirectory.txt");
+            ObjectOutputStream out = new ObjectOutputStream(file);
+
+            out.writeObject(runnerDirectory);
+            out.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<String, Long> LoadRunnerDirectory() {
+        try {
+            FileInputStream file = new FileInputStream("src\\main\\resources\\runnerDirectory.txt");
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            @SuppressWarnings("unchecked") Map<String, Long> runnerDirectory = (TreeMap<String, Long>) in.readObject();
+
+            in.close();
+            file.close();
+
+            return runnerDirectory;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

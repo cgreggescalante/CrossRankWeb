@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Race implements Serializable {
-    private String meetName;
-    private String division;
-    private String sex;
-    private List<Result> results;
+    private final String meetName;
+    private final String division;
+    private final String sex;
+    private final List<Result> results;
     private final long id;
 
     public Race(Result result, long id) {
@@ -28,6 +28,7 @@ public class Race implements Serializable {
         return meetName;
     }
 
+    @SuppressWarnings("unused")
     public String getDivision() {
         return division;
     }

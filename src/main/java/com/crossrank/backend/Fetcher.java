@@ -17,7 +17,7 @@ public class Fetcher {
         List<Result> results = new ArrayList<>();
 
         for (int resultsId : resultIds) {
-            String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
+            @SuppressWarnings("SpellCheckingInspection") String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
 
             String content = HttpRequester.Get(url);
 

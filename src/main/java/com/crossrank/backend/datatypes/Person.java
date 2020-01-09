@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements Serializable {
-    private String firstName;
-    private String lastName;
-    private String genderName;
+    private final String firstName;
+    private final String lastName;
+    private final String genderName;
 
     private double ranking;
     private double tempRanking;
@@ -17,7 +17,7 @@ public class Person implements Serializable {
     private int winLoss;
     private final long id;
 
-    private List<Result> results;
+    private final List<Result> results;
 
     public Person(Result result, long id) {
         this.id = id;
@@ -74,10 +74,12 @@ public class Person implements Serializable {
         results.add(result);
     }
 
+    @SuppressWarnings("unused")
     public String getFirstName() {
         return firstName;
     }
 
+    @SuppressWarnings("unused")
     public String getLastName() {
         return lastName;
     }
@@ -94,10 +96,12 @@ public class Person implements Serializable {
         return ranking;
     }
 
+    @SuppressWarnings("unused")
     public int getRaces() {
         return races;
     }
 
+    @SuppressWarnings("unused")
     public int getWinLoss() {
         return winLoss;
     }
@@ -106,6 +110,7 @@ public class Person implements Serializable {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public List<Result> getResults() {
         return results;
     }
