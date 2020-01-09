@@ -56,10 +56,6 @@
                         <th><button onclick="pageup()">></button></th>
                     </tr>
                 </table>
-
-                <input id="page" type="number" min=1 max=100 step=1 value=1>
-
-                <input type="button" onclick="refreshRankings()" value="Submit">
             </div>
 
             <div id="rankingsTable" class="w3-container" style="max-width: 700px">
@@ -84,11 +80,17 @@
             }
 
             pageup = function() {
-                const page_num = document.getElementById("")
+                const page_num = document.getElementById("pageNumber").innerText;
+                document.getElementById("pageNumber").innerText = (parseInt(page_num) + 1).toString();
+                refreshRankings();
             };
 
             pagedown = function() {
-
+                const page_num = document.getElementById("pageNumber").innerText;
+                if (parseInt(page_num) > 1) {
+                    document.getElementById("pageNumber").innerText = (parseInt(page_num) - 1).toString();
+                    refreshRankings();
+                }
             };
 
             refreshRankings = function () {
@@ -113,7 +115,7 @@
 
                 const sex = document.getElementById('sexInput')["value"];
                 const pageLength = document.getElementById('pageLength')["value"];
-                const page = document.getElementById('page')["value"];
+                const page = document.getElementById('pageNumber').innerText;
 
                 const url = "http://localhost:8080/api/runners/rankings?page=" + page + "&pageLength=" + pageLength + "&sex=" + sex;
 
