@@ -12,24 +12,26 @@ import java.util.List;
 
 public class Fetcher {
 
-    public static List<Race> GetRaces(int meetId, int resultsId, long raceIdCounter) {
-        String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
-
-        String content = HttpRequester.Get(url);
-        System.out.println(content);
+    public static List<Race> GetRaces(int meetId, List<Integer> resultIds, long raceIdCounter) {
 
         List<Result> results = new ArrayList<>();
 
-        try {
-            JSONObject jsonObject = (JSONObject) new JSONParser().parse(content);
-            JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+        for (int resultsId : resultIds) {
+            String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
 
-            for (Object o : jsonArray) {
-                Result result = new Result((JSONObject) o);
-                results.add(result);
+            String content = HttpRequester.Get(url);
+
+            try {
+                JSONObject jsonObject = (JSONObject) new JSONParser().parse(content);
+                JSONArray jsonArray = (JSONArray) jsonObject.get("data");
+
+                for (Object o : jsonArray) {
+                    Result result = new Result((JSONObject) o);
+                    results.add(result);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
 
         List<Race> races = new ArrayList<>();
@@ -47,7 +49,6 @@ public class Fetcher {
             if (!added) {
                 Race newRace = new Race(result, raceIdCounter);
                 raceIdCounter++;
-                System.out.println(newRace.getMeetName() + " " + newRace.getSex());
                 newRace.addResult(result);
                 races.add(newRace);
             }
@@ -57,6 +58,9 @@ public class Fetcher {
     }
 
     public static void main(String[] args) {
-        Fetcher.GetRaces(362828, 681528, 0);
+        List<Integer> resultIds = new ArrayList<>(){{
+            add(681528);
+        }};
+        Fetcher.GetRaces(362828, resultIds, 0);
     }
 }

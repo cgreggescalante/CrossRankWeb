@@ -14,7 +14,7 @@ import java.util.Map;
 public class CrossRank implements Serializable {
     private List<Person> runners;
     private List<Race> races;
-    private List<String> scoredMeets;
+    private List<Integer> scoredMeets;
 
     private long runnerIdCounter;
     private long raceIdCounter;
@@ -29,21 +29,16 @@ public class CrossRank implements Serializable {
         Map<Integer, List<Integer>> meetData = MeetCompiler.CompileMonth();
 
         for (Map.Entry<Integer, List<Integer>> entry : meetData.entrySet()) {
-            int meetId = entry.getKey();
-
-            for (int resultsId : entry.getValue()) {
-                ScoreMeet(meetId, resultsId);
-            }
+            ScoreMeet(entry.getKey(), entry.getValue());
         }
     }
 
-    private void ScoreMeet(int meetId, int resultsId) {
-        if (scoredMeets.contains(meetId + " " + resultsId)) {
-            System.out.println("Meet : " + meetId + " " + resultsId + " has already been scored");
+    private void ScoreMeet(int meetId, List<Integer> resultsId) {
+        if (scoredMeets.contains(meetId)) {
             return;
         }
 
-        scoredMeets.add(meetId + " " + resultsId);
+        scoredMeets.add(meetId);
 
         List<Race> newRaces = Fetcher.GetRaces(meetId, resultsId, raceIdCounter);
         raceIdCounter += newRaces.size();
@@ -93,8 +88,6 @@ public class CrossRank implements Serializable {
         List<Person> sorted = new ArrayList<>();
         Rankings rankings = new Rankings();
 
-        System.out.println(crossRank.runners.size());
-
         crossRank.runners.sort(Comparator.comparing(Person::getRanking).reversed());
         for (Person p : crossRank.runners) {
             if (p.getGenderName().equalsIgnoreCase(sex)) {
@@ -102,13 +95,9 @@ public class CrossRank implements Serializable {
             }
         }
 
-        System.out.println(sorted.size());
-
         for (int i = pageLength * page - pageLength; i < pageLength * page; i++) {
             rankings.addRunner(sorted.get(i));
         }
-
-        System.out.println(rankings.getRunners().size());
 
         return rankings;
     }
