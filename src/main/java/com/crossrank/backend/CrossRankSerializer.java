@@ -12,8 +12,6 @@ public class CrossRankSerializer {
             FileInputStream file = new FileInputStream("src\\main\\resources\\rankings.txt");
             ObjectInputStream in = new ObjectInputStream(file);
 
-            System.out.println("loading rankings");
-
             CrossRank crossRank = (CrossRank) in.readObject();
 
             in.close();
@@ -88,10 +86,6 @@ public class CrossRankSerializer {
     }
 
     public static void SaveRunnerDirectory(Map<String, Long> runnerDirectory) {
-        for (String entry : runnerDirectory.keySet()) {
-            System.out.println(entry);
-        }
-
         try {
             FileOutputStream file = new FileOutputStream("src\\main\\resources\\runnerDirectory.txt");
             ObjectOutputStream out = new ObjectOutputStream(file);

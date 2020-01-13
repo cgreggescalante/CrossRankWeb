@@ -28,9 +28,6 @@
             <div class="w3-bar-block">
                 <a href="/rankings" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Rankings</a>
                 <a href="/runners" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Runners</a>
-                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Traffic</a>
-                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Geo</a>
-                <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-diamond fa-fw"></i>  Orders</a>
             </div>
         </nav>
 
@@ -103,8 +100,10 @@
                 xmlHttpRequest.onreadystatechange = function() {
                     if (this.readyState === 4 && this.status === 200) {
                         const response = JSON.parse(xmlHttpRequest.responseText)["runners"];
+                        const pageLength = document.getElementById('pageLength')["value"];
+                        const page = document.getElementById('pageNumber').innerText;
                         for (let i = 0; i < response.length; i++) {
-                            const item = "<tr><td style='width: 10%'>" + (i+1) + "</td>" +
+                            const item = "<tr><td style='width: 10%'>" + ((page - 1) * pageLength + i+1) + "</td>" +
                                 "<td style='width: 40%;'>" + response[i]["fullName"] + "</td>" +
                                 "<td style='width: 35%; text-align: left;'>" + Math.round(response[i]["ranking"]) + "</td></tr>";
                             table += item;
