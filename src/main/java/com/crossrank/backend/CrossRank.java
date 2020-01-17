@@ -23,7 +23,7 @@ public class CrossRank implements Serializable {
         scoredMeets = new ArrayList<>();
         races = new ArrayList<>();
 
-        runnerDirectory = new HashMap<>();
+        runnerDirectory = new TreeMap<>();
     }
 
     private void ScanMeets() {
@@ -59,6 +59,8 @@ public class CrossRank implements Serializable {
 
                 raceParticipants.add(runner);
             }
+
+            raceParticipants.sort(Comparator.comparing(Person::getRecentMark));
 
             for (int i = 0; i < raceParticipants.size(); i++) {
                 Person participant = raceParticipants.get(i);
@@ -130,6 +132,13 @@ public class CrossRank implements Serializable {
         }
 
         return new Person();
+    }
+
+    public static void ResetRankings() {
+        CrossRank crossRank = CrossRankSerializer.LoadRankings();
+        crossRank.raceIdCounter = 0;
+        crossRank.runnerIdCounter = 0;
+        crossRank.runnerDirectory = new TreeMap<>();
     }
 
     @SuppressWarnings("unused")

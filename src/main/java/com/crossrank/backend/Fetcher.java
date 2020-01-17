@@ -17,7 +17,7 @@ public class Fetcher {
         List<Result> results = new ArrayList<>();
 
         for (int resultsId : resultIds) {
-            @SuppressWarnings("SpellCheckingInspection") String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=meetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
+            @SuppressWarnings("SpellCheckingInspection") String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=state%2CmeetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
 
             String content = HttpRequester.Get(url);
 
@@ -26,8 +26,11 @@ public class Fetcher {
                 JSONArray jsonArray = (JSONArray) jsonObject.get("data");
 
                 for (Object o : jsonArray) {
-                    Result result = new Result((JSONObject) o);
-                    results.add(result);
+                    JSONObject obj = (JSONObject) o;
+                    if (obj.get("state").equals("MN")) {
+                        Result result = new Result(obj);
+                        results.add(result);
+                    }
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

@@ -1,5 +1,7 @@
 package com.crossrank.backend.datatypes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,5 +115,10 @@ public class Person implements Serializable {
     @SuppressWarnings("unused")
     public List<Result> getResults() {
         return results;
+    }
+
+    @JsonIgnore
+    public double getRecentMark() {
+        return results.get(results.size() - 1).getMarkDouble();
     }
 }

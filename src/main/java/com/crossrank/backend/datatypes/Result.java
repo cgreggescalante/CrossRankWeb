@@ -14,6 +14,9 @@ public class Result implements Serializable {
     private final String divisionName;
     private final String genderName;
     private final String mark;
+    private final String state;
+
+    private final double markDouble;
 
     public Result(JSONObject data) {
         eventCode = (String) data.get("eventCode");
@@ -25,6 +28,10 @@ public class Result implements Serializable {
         divisionName = (String) data.get("divisionName");
         genderName = (String) data.get("genderName");
         mark = (String) data.get("mark");
+        state = (String) data.get("state");
+
+        markDouble = Integer.parseInt(mark.substring(0, 2)) * 60
+                + Double.parseDouble(mark.substring(3));
     }
 
     @SuppressWarnings("unused")
@@ -69,5 +76,13 @@ public class Result implements Serializable {
     @SuppressWarnings("unused")
     public String getMark() {
         return mark;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public double getMarkDouble() {
+        return markDouble;
     }
 }
