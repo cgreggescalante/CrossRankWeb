@@ -13,7 +13,6 @@ public class MeetCompiler {
         Map<Integer, List<Integer>> resultIDs = new HashMap<>();
 
         for (int i = 8; i < 13; i++) {
-            System.out.println(i);
             Map<Integer, List<Integer>> month = CompileMonth(i, year);
 
             resultIDs.putAll(month);
@@ -81,13 +80,6 @@ public class MeetCompiler {
         }
 
         return resultIds;
-    }
-
-    public static void main(String[] args) {
-
-        for (Map.Entry<Integer, List<Integer>> entry : MeetCompiler.CompileMonth(9, 2019).entrySet()) {
-            System.out.println(entry);
-        }
     }
 }
 

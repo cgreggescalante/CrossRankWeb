@@ -1,5 +1,6 @@
 package com.crossrank.backend;
 
+import com.crossrank.LoadingBar;
 import com.crossrank.backend.datatypes.*;
 
 import java.io.Serializable;
@@ -45,15 +46,26 @@ public class CrossRank implements Serializable {
      * Sorts the list into chronological order.
      */
     private void GetResults() {
+        System.out.println("LOADING RESULTS");
+
         meetIndex = CrossRankSerializer.LoadMeetIndex();
+
+
+
         if (meetIndex != null) {
             meetData.putAll(meetIndex.meets);
+
+            LoadingBar loadingBar = new LoadingBar(50, meetData.size());
 
             for (Map.Entry<Integer, List<Integer>> entry : meetData.entrySet()) {
                 List<Race> newRaces = Fetcher.GetRaces(entry.getKey(), entry.getValue(), raceIdCounter);
                 races.addAll(newRaces);
                 raceIdCounter += newRaces.size();
+
+                loadingBar.updateProgress();
             }
+
+            loadingBar.end();
 
             races.sort(Comparator.comparing(Race::getMeetDate));
         } else {
@@ -66,10 +78,16 @@ public class CrossRank implements Serializable {
      * Scores each saved meet.
      */
     private void ScoreMeets() {
+        System.out.println("SCORING MEETS");
+
+        LoadingBar loadingBar = new LoadingBar(50, races.size());
+
         for (Race race : races) {
-            System.out.println(race.getMeetDate());
             ScoreMeet(race);
+            loadingBar.updateProgress();
         }
+
+        loadingBar.end();
     }
 
 
@@ -89,12 +107,18 @@ public class CrossRank implements Serializable {
                 runnerDirectory.put(runner.getFullName(), runner.getId());
                 runnerIdCounter++;
                 runners.add(runner);
+            } else {
+                runner.addResult(result);
             }
 
             raceParticipants.add(runner);
         }
 
         raceParticipants.sort(Comparator.comparing(Person::getRecentMark));
+
+        for (Person raceParticipant : raceParticipants) {
+            raceParticipant.addRace();
+        }
 
         for (int i = 0; i < raceParticipants.size(); i++) {
             Person current = raceParticipants.get(i);
@@ -109,6 +133,12 @@ public class CrossRank implements Serializable {
                 Person other = raceParticipants.get(j);
                 newRankings(current, other);
             }
+        }
+
+        for (Person participant : raceParticipants) {
+            double currentRating = participant.getRanking();
+            int lastResult = participant.getResults().size() - 1;
+            participant.getResults().get(lastResult).setRating(currentRating);
         }
 
 
@@ -139,8 +169,11 @@ public class CrossRank implements Serializable {
         double Pb = Probability(winner.getRanking(), loser.getRanking());
         double Pa = 1 - Pb;
 
-        double Ra = winner.getRanking() + 5 * (1 - Pa);
-        double Rb = loser.getRanking() + 5 * (-Pb);
+        float winnerK = 100f / winner.getRaces();
+        float loserK = 100f / loser.getRaces();
+
+        double Ra = winner.getRanking() + winnerK * (1 - Pa);
+        double Rb = loser.getRanking() + loserK * (-Pb);
 
         winner.setRanking(Ra);
         loser.setRanking(Rb);
@@ -170,7 +203,6 @@ public class CrossRank implements Serializable {
     private Person getPerson(Result result) {
         for (Person p : runners) {
             if (p.getFullName().equals(result.getFullName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
-                p.addResults(result);
                 return p;
             }
         }
@@ -207,6 +239,7 @@ public class CrossRank implements Serializable {
         CrossRank crossRank = CrossRankSerializer.LoadRankings();
         crossRank.GetResults();
         crossRank.ScoreMeets();
+        System.out.println("SAVING RESULTS");
         CrossRankSerializer.SaveRankings(crossRank);
         CrossRankSerializer.SaveRunners(crossRank.runners);
         CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);

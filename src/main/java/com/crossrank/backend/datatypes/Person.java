@@ -12,11 +12,8 @@ public class Person implements Serializable {
     private final String genderName;
 
     private double ranking;
-    private double tempRanking;
-    private double opponentRankings;
 
     private int races;
-    private int winLoss;
     private final long id;
 
     private final List<Result> results;
@@ -31,10 +28,7 @@ public class Person implements Serializable {
         genderName = result.getGenderName();
 
         ranking = 1000;
-        tempRanking = 0;
         races = 0;
-        winLoss = 0;
-        opponentRankings = 0;
     }
 
     public Person() {
@@ -46,35 +40,11 @@ public class Person implements Serializable {
         genderName = null;
 
         ranking = -1;
-        tempRanking = -1;
         races = -1;
-        winLoss = -1;
-        opponentRankings = -1;
     }
 
-    public void updateRanking() {
-        tempRanking = (opponentRankings + 400 * winLoss) / races;
-    }
-
-    public void finalizeRanking() {
-        ranking = tempRanking;
-        results.get(results.size() - 1).setRating(ranking);
-    }
-
-    public void addRaces(int i) {
-        races += i;
-    }
-
-    public void addOpponentRatings(double opponentRating) {
-        opponentRankings += opponentRating;
-    }
-
-    public void addWinLoss(int i) {
-        winLoss += i;
-    }
-
-    public void addResults(Result result) {
-        results.add(result);
+    public void addRace() {
+        races++;
     }
 
     @SuppressWarnings("unused")
@@ -104,11 +74,6 @@ public class Person implements Serializable {
         return races;
     }
 
-    @SuppressWarnings("unused")
-    public int getWinLoss() {
-        return winLoss;
-    }
-
     public long getId() {
         return id;
     }
@@ -125,5 +90,9 @@ public class Person implements Serializable {
 
     public void setRanking(double ranking) {
         this.ranking = ranking;
+    }
+
+    public void addResult(Result result) {
+        results.add(result);
     }
 }

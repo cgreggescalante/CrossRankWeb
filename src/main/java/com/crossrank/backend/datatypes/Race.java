@@ -30,10 +30,8 @@ public class Race implements Serializable {
             String content = HttpRequester.Get("https://mn.milesplit.com/api/v1/meets/" + meetId);
             JSONObject response = (JSONObject) new JSONParser().parse(content);
             JSONObject meetData = (JSONObject) response.get("data");
-            System.out.println(meetData);
 
             String date = (String) meetData.get("dateStart");
-            System.out.println(date);
             meetDate = Integer.parseInt(date.replace("-", ""));
 
         } catch (ParseException e) {
