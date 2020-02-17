@@ -1,7 +1,6 @@
 package com.crossrank.backend.datatypes;
 
 import com.crossrank.backend.HttpRequester;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

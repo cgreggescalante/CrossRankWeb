@@ -15,6 +15,9 @@ public class CrossRank implements Serializable {
 
     private Map<String, Long> runnerDirectory;
 
+    private Map<Double, String> sortedRankingsBoys;
+    private Map<Double, String> sortedRankingsGirls;
+
     private long runnerIdCounter;
     private long raceIdCounter;
 
@@ -24,21 +27,27 @@ public class CrossRank implements Serializable {
 
         runnerDirectory = new TreeMap<>();
 
-        meetData = new HashMap<>();
-
-        meetIndex = new MeetIndex();
+        meetData = new TreeMap<>();
     }
 
 
     /**
-     * Generates the MeetIndex, a list of the meetIds and their respective
-     * resultIds.
+     * If there exists a saved MeetIndex, loads that, otherwise generates
+     * a new MeetIndex
      */
     private void BuildIndex() {
-        System.out.println("BUILDING MEET INDEX");
-        meetIndex.CompileSeason(2019);
+        meetIndex = CrossRankSerializer.LoadMeetIndex();
 
-        CrossRankSerializer.SaveMeetIndex(meetIndex);
+        if (meetIndex == null) {
+            System.out.println("NO MEET INDEX SAVED");
+
+            meetIndex = new MeetIndex();
+            meetIndex.CompileSeason(2019);
+
+            CrossRankSerializer.SaveMeetIndex(meetIndex);
+        } else {
+            System.out.println("EXISTING MEET INDEX LOADED");
+        }
     }
 
 
@@ -180,25 +189,45 @@ public class CrossRank implements Serializable {
         loser.setRanking(Rb);
     }
 
-    public static Rankings GetRankings(int page, int pageLength, String sex) {
-        CrossRank crossRank = CrossRankSerializer.LoadRankings();
+    /**
+     * Places runners into sorted TreeMaps by gender
+     * Used for quickly retrieving rankings.
+     */
+    private void CreateSortedRankings() {
+        sortedRankingsBoys = new TreeMap<>();
+        sortedRankingsGirls = new TreeMap<>();
 
-        List<Person> sorted = new ArrayList<>();
-        Rankings rankings = new Rankings();
-
-        crossRank.runners.sort(Comparator.comparing(Person::getRanking).reversed());
-
-        for (Person p : crossRank.runners) {
-            if (p.getGenderName().equalsIgnoreCase(sex)) {
-                sorted.add(p);
+        for (Person runner : runners) {
+            if (runner.getGenderName().equals("Boys")) {
+                sortedRankingsBoys.put(runner.getRanking(), runner.getFullName());
+            } else {
+                sortedRankingsGirls.put(runner.getRanking(), runner.getFullName());
             }
         }
+    }
+
+    /**
+     * Given the section and sex, returns the names and ratings of all runners
+     * who fall in the area.
+     * @param page Integer denoting the section the rankings will come from.
+     * @param pageLength Integer denotng the number of runners on each page.
+     * @param sex String denoting the sex to be ranked
+     * @return A TreeMap with Double ratings and String names.
+     */
+    public static Map<Double, String> GetRankings(int page, int pageLength, String sex) {
+        Map<Double, String> results = CrossRankSerializer.LoadSortedRankings(sex);
+
+        List<Double> ratings = new ArrayList<>(results.keySet());
+
+        Collections.reverse(ratings);
+
+        Map<Double, String> product = new TreeMap<>();
 
         for (int i = pageLength * page - pageLength; i < pageLength * page; i++) {
-            rankings.addRunner(sorted.get(i));
+            product.put(ratings.get(i), results.get(ratings.get(i)));
         }
 
-        return rankings;
+        return product;
     }
 
     private Person getPerson(Result result) {
@@ -236,15 +265,27 @@ public class CrossRank implements Serializable {
         return runnerDirectory;
     }
 
+    public Map<Double, String> getSortedRankingsBoys() {
+        return sortedRankingsBoys;
+    }
+
+    public Map<Double, String> getSortedRankingsGirls() {
+        return sortedRankingsGirls;
+    }
+
     public static void main(String[] args) {
         CrossRank crossRank = CrossRankSerializer.LoadRankings();
         crossRank.BuildIndex();
-//        crossRank.GetResults();
-//        crossRank.ScoreMeets();
-//        System.out.println("SAVING RESULTS");
-//        CrossRankSerializer.SaveRankings(crossRank);
-//        CrossRankSerializer.SaveRunners(crossRank.runners);
-//        CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);
-//        CrossRankSerializer.SaveRaces(crossRank.races);
+        crossRank.GetResults();
+        crossRank.ScoreMeets();
+        crossRank.CreateSortedRankings();
+        System.out.println("SAVING RESULTS");
+        CrossRankSerializer.SaveRankings(crossRank);
+        CrossRankSerializer.SaveSortedRankings(crossRank);
+        CrossRankSerializer.SaveRunners(crossRank.runners);
+        CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);
+        CrossRankSerializer.SaveRaces(crossRank.races);
     }
+
+
 }

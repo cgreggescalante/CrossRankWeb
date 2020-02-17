@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="/javascript/rankings.js"></script>
 
     <style>
         html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
@@ -99,13 +98,20 @@
 
                 xmlHttpRequest.onreadystatechange = function() {
                     if (this.readyState === 4 && this.status === 200) {
-                        const response = JSON.parse(xmlHttpRequest.responseText)["runners"];
+                        const response = JSON.parse(xmlHttpRequest.responseText);
                         const pageLength = document.getElementById('pageLength')["value"];
                         const page = document.getElementById('pageNumber').innerText;
-                        for (let i = 0; i < response.length; i++) {
+
+                        var arr = [];
+                        for (var key in response) {
+                            arr.push(key)
+                        }
+                        arr.reverse();
+
+                        for (var i = 0; i < arr.length; i++) {
                             const item = "<tr><td style='width: 10%'>" + ((page - 1) * pageLength + i+1) + "</td>" +
-                                "<td style='width: 40%;'>" + response[i]["fullName"] + "</td>" +
-                                "<td style='width: 35%; text-align: left;'>" + Math.round(response[i]["ranking"]) + "</td></tr>";
+                                "<td style='width: 40%;'>" + response[arr[i]] + "</td>" +
+                                "<td style='width: 35%; text-align: left;'>" + Math.round(arr[i]) + "</td></tr>";
                             table += item;
                         }
                         table += "</table>";

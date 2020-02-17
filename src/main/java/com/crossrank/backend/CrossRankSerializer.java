@@ -3,6 +3,7 @@ package com.crossrank.backend;
 import com.crossrank.backend.datatypes.MeetIndex;
 import com.crossrank.backend.datatypes.Person;
 import com.crossrank.backend.datatypes.Race;
+import com.sun.source.tree.Tree;
 
 import java.io.*;
 import java.util.*;
@@ -142,7 +143,53 @@ public class CrossRankSerializer {
 
             return meetIndex;
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void SaveSortedRankings(CrossRank crossRank) {
+        try {
+            FileOutputStream file = new FileOutputStream("src\\main\\resources\\sortedRankingsBoys.txt");
+            ObjectOutputStream out = new ObjectOutputStream(file);
+
+            out.writeObject(crossRank.getSortedRankingsBoys());
+            out.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileOutputStream file = new FileOutputStream("src\\main\\resources\\sortedRankingsGirls.txt");
+            ObjectOutputStream out = new ObjectOutputStream(file);
+
+            out.writeObject(crossRank.getSortedRankingsGirls());
+            out.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<Double, String> LoadSortedRankings(String gender) {
+        try {
+            FileInputStream file = new FileInputStream("src\\main\\resources\\sortedRankings" + gender + ".txt");
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            Map<Double, String> rankings = (Map<Double, String>) in.readObject();
+
+            in.close();
+            file.close();
+
+            return rankings;
+
+        } catch (IOException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }

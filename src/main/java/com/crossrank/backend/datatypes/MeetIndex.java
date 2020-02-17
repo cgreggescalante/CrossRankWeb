@@ -4,10 +4,7 @@ import com.crossrank.LoadingBar;
 import com.crossrank.backend.HttpRequester;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +12,7 @@ public class MeetIndex implements Serializable {
     public Map<Integer, List<Integer>> meets;
 
     public MeetIndex() {
-        meets = new HashMap<>();
+        meets = new TreeMap<>();
     }
 
     /**
@@ -23,6 +20,7 @@ public class MeetIndex implements Serializable {
      * @param year Integer denoting which year to gather meets from.
      */
     public void CompileSeason(int year) {
+        System.out.println("COMPILING MEETS FROM YEAR : " + year);
 
         LoadingBar loadingBar = new LoadingBar(50, 5);
 
