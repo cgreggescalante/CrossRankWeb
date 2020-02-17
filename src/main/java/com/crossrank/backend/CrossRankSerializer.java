@@ -1,5 +1,6 @@
 package com.crossrank.backend;
 
+import com.crossrank.backend.datatypes.MeetIndex;
 import com.crossrank.backend.datatypes.Person;
 import com.crossrank.backend.datatypes.Race;
 
@@ -109,6 +110,37 @@ public class CrossRankSerializer {
             file.close();
 
             return runnerDirectory;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void SaveMeetIndex(MeetIndex meetIndex) {
+        try {
+            FileOutputStream file = new FileOutputStream("src\\main\\resources\\meetIndex.txt");
+            ObjectOutputStream out = new ObjectOutputStream(file);
+
+            out.writeObject(meetIndex);
+            out.close();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static MeetIndex LoadMeetIndex() {
+        try {
+            FileInputStream file = new FileInputStream("src\\main\\resources\\meetIndex.txt");
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            MeetIndex meetIndex = (MeetIndex) in.readObject();
+
+            in.close();
+            file.close();
+
+            return meetIndex;
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

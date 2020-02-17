@@ -18,6 +18,7 @@ public class Result implements Serializable {
     private final String meetId;
 
     private double markDouble;
+    private double rating;
 
     public Result(JSONObject data) {
         eventCode = (String) data.get("eventCode");
@@ -39,6 +40,8 @@ public class Result implements Serializable {
             System.out.println(data);
             markDouble = 0;
         }
+
+        rating = 1300;
     }
 
     @SuppressWarnings("unused")
@@ -95,5 +98,13 @@ public class Result implements Serializable {
 
     public double getMarkDouble() {
         return markDouble;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public double getRating() {
+        return rating;
     }
 }

@@ -30,7 +30,7 @@ public class Person implements Serializable {
         lastName = result.getLastName();
         genderName = result.getGenderName();
 
-        ranking = 1300;
+        ranking = 1000;
         tempRanking = 0;
         races = 0;
         winLoss = 0;
@@ -58,6 +58,7 @@ public class Person implements Serializable {
 
     public void finalizeRanking() {
         ranking = tempRanking;
+        results.get(results.size() - 1).setRating(ranking);
     }
 
     public void addRaces(int i) {
@@ -120,5 +121,9 @@ public class Person implements Serializable {
     @JsonIgnore
     public double getRecentMark() {
         return results.get(results.size() - 1).getMarkDouble();
+    }
+
+    public void setRanking(double ranking) {
+        this.ranking = ranking;
     }
 }

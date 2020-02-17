@@ -93,9 +93,10 @@
 
                             document.getElementById("runnerName").innerText = response["fullName"];
                             document.getElementById("runnerRank").innerText = "Ranking : " + Math.round(response["ranking"]).toString(10);
-                            for (let i = 0; i < response["results"].length; i++) {
-                                const item = "<tr><td style='width: 90%'>" + response["results"][i]["meetName"] + "</td>" +
-                                    "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td></tr>";
+                            for (let i = response["results"].length - 1; i >= 0; i--) {
+                                const item = "<tr><td style='width: 70%'>" + response["results"][i]["meetName"] + "</td>" +
+                                    "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td>" +
+                                    "<td style='width: 20%;'>" + Math.round(response["results"][i]["rating"]) + "</td></tr>";
                                 table += item;
                             }
                             table += "</table>";
