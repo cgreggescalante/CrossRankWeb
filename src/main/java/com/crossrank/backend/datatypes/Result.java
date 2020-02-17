@@ -15,8 +15,9 @@ public class Result implements Serializable {
     private final String genderName;
     private final String mark;
     private final String state;
+    private final String meetId;
 
-    private final double markDouble;
+    private double markDouble;
 
     public Result(JSONObject data) {
         eventCode = (String) data.get("eventCode");
@@ -29,9 +30,15 @@ public class Result implements Serializable {
         genderName = (String) data.get("genderName");
         mark = (String) data.get("mark");
         state = (String) data.get("state");
+        meetId = (String) data.get("meetId");
 
-        markDouble = Integer.parseInt(mark.substring(0, 2)) * 60
-                + Double.parseDouble(mark.substring(3));
+        try {
+            markDouble = Integer.parseInt(mark.substring(0, 2)) * 60
+                    + Double.parseDouble(mark.substring(3));
+        } catch (NumberFormatException e) {
+            System.out.println(data);
+            markDouble = 0;
+        }
     }
 
     @SuppressWarnings("unused")
@@ -80,6 +87,10 @@ public class Result implements Serializable {
 
     public String getState() {
         return state;
+    }
+
+    public String getMeetId() {
+        return meetId;
     }
 
     public double getMarkDouble() {

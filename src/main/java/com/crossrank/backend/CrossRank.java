@@ -27,63 +27,69 @@ public class CrossRank implements Serializable {
     }
 
     private void ScanMeets() {
-        Map<Integer, List<Integer>> meetData = MeetCompiler.CompileMonth();
+        Map<Integer, List<Integer>> meetData = MeetCompiler.CompileSeason(2019);
+
+        List<Race> races = new ArrayList<>();
 
         for (Map.Entry<Integer, List<Integer>> entry : meetData.entrySet()) {
-            ScoreMeet(entry.getKey(), entry.getValue());
+            List<Race> newRaces = Fetcher.GetRaces(entry.getKey(), entry.getValue(), raceIdCounter);
+            races.addAll(newRaces);
+            raceIdCounter += newRaces.size();
+        }
+
+        races.sort(Comparator.comparing(Race::getMeetDate));
+
+        for (Race race : races) {
+            System.out.println(race.getMeetDate());
+            ScoreMeet(race);
         }
     }
 
-    private void ScoreMeet(int meetId, List<Integer> resultsId) {
-        if (scoredMeets.contains(meetId)) {
-            return;
+    private void ScoreMeet(Race race) {
+
+        scoredMeets.add((int) race.getId());
+
+        races.add(race);
+
+        List<Person> raceParticipants = new ArrayList<>();
+        for (Result result : race.getResults()) {
+            Person runner = getPerson(result);
+
+            if (runner == null) {
+                runner = new Person(result, runnerIdCounter);
+                runnerDirectory.put(runner.getFullName(), runner.getId());
+                runnerIdCounter++;
+                runners.add(runner);
+            }
+
+            raceParticipants.add(runner);
         }
 
-        scoredMeets.add(meetId);
+        raceParticipants.sort(Comparator.comparing(Person::getRecentMark));
 
-        List<Race> newRaces = Fetcher.GetRaces(meetId, resultsId, raceIdCounter);
-        raceIdCounter += newRaces.size();
+        for (int i = 0; i < raceParticipants.size(); i++) {
+            Person participant = raceParticipants.get(i);
+            participant.addRaces(raceParticipants.size()-1);
 
-        for (Race race : newRaces) {
-            races.add(race);
-            List<Person> raceParticipants = new ArrayList<>();
-            for (Result result : race.getResults()) {
-                Person runner = getPerson(result);
-
-                if (runner == null) {
-                    runner = new Person(result, runnerIdCounter);
-                    runnerDirectory.put(runner.getFullName(), runner.getId());
-                    runnerIdCounter++;
-                    runners.add(runner);
-                }
-
-                raceParticipants.add(runner);
+            double opponentRating = 0;
+            for (int j = 0; j < i; j++) {
+                opponentRating += raceParticipants.get(j).getRanking();
+            }
+            for (int j = i+1; j < raceParticipants.size(); j++) {
+                opponentRating += raceParticipants.get(j).getRanking();
             }
 
-            raceParticipants.sort(Comparator.comparing(Person::getRecentMark));
+            participant.addOpponentRatings(opponentRating);
 
-            for (int i = 0; i < raceParticipants.size(); i++) {
-                Person participant = raceParticipants.get(i);
-                participant.addRaces(raceParticipants.size()-1);
+            participant.addWinLoss(-2 * i - 1 + raceParticipants.size());
 
-                double opponentRating = 0;
-                for (int j = 0; j < i; j++) {
-                    opponentRating += raceParticipants.get(j).getRanking();
-                }
-                for (int j = i+1; j < raceParticipants.size(); j++) {
-                    opponentRating += raceParticipants.get(j).getRanking();
-                }
-
-                participant.addOpponentRatings(opponentRating);
-                participant.addWinLoss(raceParticipants.size() - i - 1);
-
-                participant.updateRanking();
-            }
-
-            for (Person p : raceParticipants) {
-                p.finalizeRanking();
-            }
+            participant.updateRanking();
         }
+
+        for (Person p : raceParticipants) {
+            p.finalizeRanking();
+        }
+
 
         runnerDirectory = new TreeMap<>(runnerDirectory);
     }
@@ -95,6 +101,7 @@ public class CrossRank implements Serializable {
         Rankings rankings = new Rankings();
 
         crossRank.runners.sort(Comparator.comparing(Person::getRanking).reversed());
+
         for (Person p : crossRank.runners) {
             if (p.getGenderName().equalsIgnoreCase(sex)) {
                 sorted.add(p);

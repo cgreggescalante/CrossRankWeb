@@ -1,21 +1,44 @@
 package com.crossrank.backend.datatypes;
 
+import com.crossrank.backend.HttpRequester;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Race implements Serializable {
-    private final String meetName;
-    private final String division;
-    private final String sex;
-    private final List<Result> results;
-    private final long id;
+    private String meetName;
+    private String division;
+    private String sex;
+    private List<Result> results;
+    private int meetId;
+    private int meetDate;
+    private long id;
 
     public Race(Result result, long id) {
         meetName = result.getMeetName();
         division = result.getDivisionName();
         sex = result.getGenderName();
+        meetId = Integer.parseInt(result.getMeetId());
         this.id = id;
+
+        try {
+            String content = HttpRequester.Get("https://mn.milesplit.com/api/v1/meets/" + meetId);
+            JSONObject response = (JSONObject) new JSONParser().parse(content);
+            JSONObject meetData = (JSONObject) response.get("data");
+            System.out.println(meetData);
+
+            String date = (String) meetData.get("dateStart");
+            System.out.println(date);
+            meetDate = Integer.parseInt(date.replace("-", ""));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         results = new ArrayList<>();
     }
@@ -41,7 +64,15 @@ public class Race implements Serializable {
         return results;
     }
 
+    public int getMeetDate() {
+        return meetDate;
+    }
+
     public long getId() {
         return id;
+    }
+
+    public static void main(String[] args) {
+
     }
 }

@@ -17,7 +17,7 @@ public class Fetcher {
         List<Result> results = new ArrayList<>();
 
         for (int resultsId : resultIds) {
-            @SuppressWarnings("SpellCheckingInspection") String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=state%2CmeetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace&teamScores=true&m=GET";
+            @SuppressWarnings("SpellCheckingInspection") String url = "https://mn.milesplit.com/api/v1/meets/" + meetId + "/performances?resultsId=" + resultsId + "&fields=state%2CmeetName%2CfirstName%2ClastName%2Cgender%2CgenderName%2CdivisionName%2CeventCode%2Cmark%2Cplace%2CmeetId&teamScores=true&m=GET";
 
             String content = HttpRequester.Get(url);
 
@@ -27,7 +27,7 @@ public class Fetcher {
 
                 for (Object o : jsonArray) {
                     JSONObject obj = (JSONObject) o;
-                    if (obj.get("state").equals("MN")) {
+                    if (obj.get("state").equals("MN") && obj.get("eventCode").equals("5000m") && ((String) obj.get("mark")).length() < 10) {
                         Result result = new Result(obj);
                         results.add(result);
                     }

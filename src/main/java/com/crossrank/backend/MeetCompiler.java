@@ -9,10 +9,33 @@ import java.util.regex.Pattern;
 
 public class MeetCompiler {
 
-    public static Map<Integer, List<Integer>> CompileMonth() {
-        String content = HttpRequester.Get("https://mn.milesplit.com/results?month=11&year=2019&level=hs");
+    public static Map<Integer, List<Integer>> CompileSeason(int year) {
+        Map<Integer, List<Integer>> resultIDs = new HashMap<>();
 
-        List<Integer> meetIds = GatherData(content);
+        for (int i = 8; i < 13; i++) {
+            System.out.println(i);
+            Map<Integer, List<Integer>> month = CompileMonth(i, year);
+
+            resultIDs.putAll(month);
+        }
+
+        return resultIDs;
+    }
+
+    public static Map<Integer, List<Integer>> CompileMonth(int month, int year) {
+        List<Integer> meetIds = new ArrayList<>();
+        int prevLength;
+        int page = 1;
+
+        do {
+            prevLength = meetIds.size();
+
+            String content = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
+
+            meetIds.addAll(GatherData(content));
+
+            page++;
+        } while (meetIds.size() != prevLength);
 
         return GetResultIds(meetIds);
     }
@@ -61,7 +84,10 @@ public class MeetCompiler {
     }
 
     public static void main(String[] args) {
-        MeetCompiler.CompileMonth();
+
+        for (Map.Entry<Integer, List<Integer>> entry : MeetCompiler.CompileMonth(9, 2019).entrySet()) {
+            System.out.println(entry);
+        }
     }
 }
 
