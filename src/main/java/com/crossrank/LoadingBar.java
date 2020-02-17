@@ -15,7 +15,9 @@ public class LoadingBar {
         this.width = width;
         this.total = total;
 
-        progress = 0;
+        progress = -1;
+
+        updateProgress();
 
         startTime = System.currentTimeMillis();
     }

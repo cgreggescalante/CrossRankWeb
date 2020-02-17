@@ -35,7 +35,8 @@ public class CrossRank implements Serializable {
      * resultIds.
      */
     private void BuildIndex() {
-        meetIndex.meets.putAll(MeetCompiler.CompileSeason(2019));
+        System.out.println("BUILDING MEET INDEX");
+        meetIndex.CompileSeason(2019);
 
         CrossRankSerializer.SaveMeetIndex(meetIndex);
     }
@@ -237,12 +238,13 @@ public class CrossRank implements Serializable {
 
     public static void main(String[] args) {
         CrossRank crossRank = CrossRankSerializer.LoadRankings();
-        crossRank.GetResults();
-        crossRank.ScoreMeets();
-        System.out.println("SAVING RESULTS");
-        CrossRankSerializer.SaveRankings(crossRank);
-        CrossRankSerializer.SaveRunners(crossRank.runners);
-        CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);
-        CrossRankSerializer.SaveRaces(crossRank.races);
+        crossRank.BuildIndex();
+//        crossRank.GetResults();
+//        crossRank.ScoreMeets();
+//        System.out.println("SAVING RESULTS");
+//        CrossRankSerializer.SaveRankings(crossRank);
+//        CrossRankSerializer.SaveRunners(crossRank.runners);
+//        CrossRankSerializer.SaveRunnerDirectory(crossRank.runnerDirectory);
+//        CrossRankSerializer.SaveRaces(crossRank.races);
     }
 }
