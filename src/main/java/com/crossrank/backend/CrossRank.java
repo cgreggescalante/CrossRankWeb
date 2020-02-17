@@ -210,7 +210,7 @@ public class CrossRank implements Serializable {
      * Given the section and sex, returns the names and ratings of all runners
      * who fall in the area.
      * @param page Integer denoting the section the rankings will come from.
-     * @param pageLength Integer denotng the number of runners on each page.
+     * @param pageLength Integer denoting the number of runners on each page.
      * @param sex String denoting the sex to be ranked
      * @return A TreeMap with Double ratings and String names.
      */
@@ -223,7 +223,12 @@ public class CrossRank implements Serializable {
 
         Map<Double, String> product = new TreeMap<>();
 
-        for (int i = pageLength * page - pageLength; i < pageLength * page; i++) {
+        int endIndex = page * pageLength;
+
+        if (endIndex > ratings.size()) {
+            endIndex = ratings.size();
+        }
+        for (int i = pageLength * page - pageLength; i < endIndex; i++) {
             product.put(ratings.get(i), results.get(ratings.get(i)));
         }
 
