@@ -26,6 +26,7 @@ package com.crossrank.backend.datatypes;
 
 import com.crossrank.LoadingBar;
 import com.crossrank.backend.HttpRequester;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.*;
@@ -33,7 +34,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MeetIndex implements Serializable {
-    public Map<Integer, List<Integer>> meets;
+    @Getter
+    private Map<Integer, List<Integer>> meets;
 
     public MeetIndex() {
         meets = new TreeMap<>();

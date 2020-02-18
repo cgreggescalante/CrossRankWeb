@@ -24,7 +24,7 @@
 
 package com.crossrank.api;
 
-import com.crossrank.backend.Fetcher;
+import com.crossrank.backend.datatypes.MeetResults;
 import com.crossrank.backend.datatypes.Race;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +40,6 @@ public class MeetResultsController {
     @GetMapping("/api/meet/results")
     public Race race(@RequestParam(required = false, defaultValue = "363847") int raceId,
                      @RequestParam(required = false, defaultValue = "680009") int resultsId) {
-        return Fetcher.GetRaces(raceId, Collections.singletonList(resultsId), 0).get(0);
+        return MeetResults.GetRaces(raceId, Collections.singletonList(resultsId), 0).get(0);
     }
 }

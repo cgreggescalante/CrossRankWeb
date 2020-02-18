@@ -53,6 +53,8 @@ public class Result implements Serializable {
     private final String state;
     @Getter
     private final String meetId;
+    @Getter
+    private final String athleteId;
 
     @Getter(lazy = true)
     private final String fullName = fullName();
@@ -75,6 +77,7 @@ public class Result implements Serializable {
         mark = (String) data.get("mark");
         state = (String) data.get("state");
         meetId = (String) data.get("meetId");
+        athleteId = (String) data.get("athleteId");
 
         try {
             markDouble = Integer.parseInt(mark.substring(0, 2)) * 60

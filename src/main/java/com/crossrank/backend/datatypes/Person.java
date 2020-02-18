@@ -47,13 +47,13 @@ public class  Person implements Serializable {
     @Getter
     private int races;
     @Getter
-    private final long id;
+    private final int id;
 
     @Getter
     private final List<Result> results;
 
-    public Person(Result result, long id) {
-        this.id = id;
+    public Person(Result result) {
+        id = Integer.parseInt(result.getAthleteId());
         results = new ArrayList<>();
         results.add(result);
 
