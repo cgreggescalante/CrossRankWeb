@@ -43,12 +43,12 @@ public class Race implements Serializable {
     @Getter private int meetDate;
     @Getter private long id;
 
-    public Race(Result result, long id) {
+    public Race(Result result) {
         meetName = result.getMeetName();
         division = result.getDivisionName();
         sex = result.getGenderName();
         meetId = Integer.parseInt(result.getMeetId());
-        this.id = id;
+        id = result.getResultsId();
 
         try {
             String content = HttpRequester.Get("https://mn.milesplit.com/api/v1/meets/" + meetId);

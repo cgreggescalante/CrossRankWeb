@@ -25,6 +25,7 @@
 package com.crossrank.backend.serialization;
 
 import com.crossrank.backend.datatypes.MeetResults;
+import com.crossrank.backend.datatypes.Race;
 
 import java.io.*;
 
@@ -53,6 +54,26 @@ public class MeetResultsSerializer {
             file.close();
 
             return meetResults;
+
+        } catch (IOException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Race LoadMeetResult(int id) {
+        try {
+            FileInputStream file = new FileInputStream("src\\main\\resources\\races\\" + id + ".txt");
+            ObjectInputStream in = new ObjectInputStream(file);
+
+            Race race = (Race) in.readObject();
+
+            in.close();
+            file.close();
+
+            return race;
 
         } catch (IOException e) {
             return null;

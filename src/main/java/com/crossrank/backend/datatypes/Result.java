@@ -56,6 +56,9 @@ public class Result implements Serializable {
     @Getter
     private final String athleteId;
 
+    @Getter
+    private final int resultsId;
+
     @Getter(lazy = true)
     private final String fullName = fullName();
 
@@ -65,7 +68,7 @@ public class Result implements Serializable {
     @Setter
     private double rating;
 
-    public Result(JSONObject data) {
+    public Result(JSONObject data, int resultsId) {
         eventCode = (String) data.get("eventCode");
         gender = (String) data.get("gender");
         place = (String) data.get("place");
@@ -78,6 +81,7 @@ public class Result implements Serializable {
         state = (String) data.get("state");
         meetId = (String) data.get("meetId");
         athleteId = (String) data.get("athleteId");
+        this.resultsId = resultsId;
 
         try {
             markDouble = Integer.parseInt(mark.substring(0, 2)) * 60

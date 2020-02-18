@@ -87,7 +87,7 @@ public class MeetResults implements Serializable {
                 for (Object o : jsonArray) {
                     JSONObject obj = (JSONObject) o;
                     if (obj.get("state").equals("MN") && obj.get("eventCode").equals("5000m") && ((String) obj.get("mark")).length() < 10) {
-                        Result result = new Result(obj);
+                        Result result = new Result(obj, resultsId);
                         results.add(result);
                     }
                 }
@@ -109,7 +109,7 @@ public class MeetResults implements Serializable {
                 }
             }
             if (!added) {
-                Race newRace = new Race(result, raceIdCounter);
+                Race newRace = new Race(result);
                 raceIdCounter++;
                 newRace.addResult(result);
                 races.add(newRace);
