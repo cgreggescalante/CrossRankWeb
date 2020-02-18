@@ -1,23 +1,42 @@
 package com.crossrank.backend.datatypes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 
 public class Result implements Serializable {
+    @Getter
     private final String eventCode;
+    @Getter
     private final String gender;
+    @Getter
     private final String place;
+    @Getter
     private final String firstName;
+    @Getter
     private final String lastName;
+    @Getter
     private final String meetName;
+    @Getter
     private final String divisionName;
+    @Getter
     private final String genderName;
+    @Getter
     private final String mark;
+    @Getter
     private final String state;
+    @Getter
     private final String meetId;
 
+    @Getter(lazy = true)
+    private final String fullName = fullName();
+
+    @Getter
     private double markDouble;
+    @Getter
+    @Setter
     private double rating;
 
     public Result(JSONObject data) {
@@ -44,67 +63,7 @@ public class Result implements Serializable {
         rating = 1300;
     }
 
-    @SuppressWarnings("unused")
-    public String getEventCode() {
-        return eventCode;
-    }
-
-    @SuppressWarnings("unused")
-    public String getGender() {
-        return gender;
-    }
-
-    @SuppressWarnings("unused")
-    public String getPlace() {
-        return place;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFullName() {
+    private String fullName() {
         return firstName + " " + lastName;
-    }
-
-    public String getMeetName() {
-        return meetName;
-    }
-
-    public String getDivisionName() {
-        return divisionName;
-    }
-
-    public String getGenderName() {
-        return genderName;
-    }
-
-    @SuppressWarnings("unused")
-    public String getMark() {
-        return mark;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getMeetId() {
-        return meetId;
-    }
-
-    public double getMarkDouble() {
-        return markDouble;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    public double getRating() {
-        return rating;
     }
 }

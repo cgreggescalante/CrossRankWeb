@@ -2,20 +2,25 @@ package com.crossrank.backend;
 
 import com.crossrank.LoadingBar;
 import com.crossrank.backend.datatypes.*;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.*;
 
 public class CrossRank implements Serializable {
+    @Getter
     private final List<Person> runners;
     private final List<Race> races;
     private final Map<Integer, List<Integer>> meetData;
 
     private MeetIndex meetIndex;
 
+    @Getter
     private Map<String, Long> runnerDirectory;
 
+    @Getter
     private Map<Double, String> sortedRankingsBoys;
+    @Getter
     private Map<Double, String> sortedRankingsGirls;
 
     private long runnerIdCounter;
@@ -258,24 +263,6 @@ public class CrossRank implements Serializable {
         }
 
         return new Person();
-    }
-
-    @SuppressWarnings("unused")
-    public List<Person> getRunners() {
-        return runners;
-    }
-
-    @SuppressWarnings("unused")
-    public Map<String, Long> getRunnerDirectory() {
-        return runnerDirectory;
-    }
-
-    public Map<Double, String> getSortedRankingsBoys() {
-        return sortedRankingsBoys;
-    }
-
-    public Map<Double, String> getSortedRankingsGirls() {
-        return sortedRankingsGirls;
     }
 
     public static void main(String[] args) {

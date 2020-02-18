@@ -1,21 +1,31 @@
 package com.crossrank.backend.datatypes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements Serializable {
+    @Getter
     private final String firstName;
+    @Getter
     private final String lastName;
+    @Getter
     private final String genderName;
 
+    @Getter
+    @Setter
     private double ranking;
 
+    @Getter
     private int races;
+    @Getter
     private final long id;
 
+    @Getter
     private final List<Result> results;
 
     public Person(Result result, long id) {
@@ -47,49 +57,13 @@ public class Person implements Serializable {
         races++;
     }
 
-    @SuppressWarnings("unused")
-    public String getFirstName() {
-        return firstName;
-    }
-
-    @SuppressWarnings("unused")
-    public String getLastName() {
-        return lastName;
-    }
-
     public String getFullName() {
         return firstName + " " + lastName;
-    }
-
-    public String getGenderName() {
-        return genderName;
-    }
-
-    public double getRanking() {
-        return ranking;
-    }
-
-    @SuppressWarnings("unused")
-    public int getRaces() {
-        return races;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    @SuppressWarnings("unused")
-    public List<Result> getResults() {
-        return results;
     }
 
     @JsonIgnore
     public double getRecentMark() {
         return results.get(results.size() - 1).getMarkDouble();
-    }
-
-    public void setRanking(double ranking) {
-        this.ranking = ranking;
     }
 
     public void addResult(Result result) {
