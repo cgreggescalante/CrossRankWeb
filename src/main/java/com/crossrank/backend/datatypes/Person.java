@@ -39,7 +39,7 @@ public class Person implements Serializable {
     private final String genderName;
 
     @Setter
-    private double ranking;
+    private double rating;
 
     private int races;
     private final int id;
@@ -55,7 +55,7 @@ public class Person implements Serializable {
         lastName = result.getLastName();
         genderName = result.getGenderName();
 
-        ranking = 1000;
+        rating = 1000;
         races = 0;
     }
 
@@ -67,7 +67,7 @@ public class Person implements Serializable {
         lastName = null;
         genderName = null;
 
-        ranking = -1;
+        rating = -1;
         races = -1;
     }
 

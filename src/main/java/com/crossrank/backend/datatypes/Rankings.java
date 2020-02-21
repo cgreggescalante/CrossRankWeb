@@ -25,9 +25,7 @@
 package com.crossrank.backend.datatypes;
 
 import com.crossrank.LoadingBar;
-import com.crossrank.backend.serialization.RankingsSerializer;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.sql.*;
@@ -75,7 +73,7 @@ public class Rankings implements Serializable {
                 PreparedStatement updateRating = conn.prepareStatement("UPDATE runner SET rating = ? where id = ?");
 
                 for (Person runner : runners) {
-                    updateRating.setObject(1, runner.getRanking());
+                    updateRating.setObject(1, runner.getRating());
                     updateRating.setString(2, Integer.toString(runner.getId()));
                     updateRating.execute();
                 }
@@ -119,19 +117,47 @@ public class Rankings implements Serializable {
             for (int j = 0; j < i; j++) {
                 Person other = raceParticipants.get(j);
 
-                newRankings(other, current);
+                newRatings(other, current);
             }
 
             for (int j = i+1; j < raceParticipants.size(); j++) {
                 Person other = raceParticipants.get(j);
-                newRankings(current, other);
+                newRatings(current, other);
             }
         }
 
         for (Person participant : raceParticipants) {
-            double currentRating = participant.getRanking();
+            double currentRating = participant.getRating();
             int lastResult = participant.getResults().size() - 1;
             participant.getResults().get(lastResult).setRating(currentRating);
+        }
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crossrank", "PotatoTax", "PotatoTax1707")) {
+                PreparedStatement getRecentResult = conn.prepareStatement("SELECT re.id FROM runner ru INNER JOIN result re ON ru.id = re.runner_id INNER JOIN meet m ON m.id = re.meet_id WHERE ru.id = ? ORDER BY m.date desc LIMIT 1");
+                PreparedStatement updateRating = conn.prepareStatement("UPDATE result SET rating = ? WHERE id = ?");
+
+                for (Person raceParticipant : raceParticipants) {
+                    getRecentResult.setInt(1, raceParticipant.getId());
+                    ResultSet resultSet = getRecentResult.executeQuery();
+                    resultSet.next();
+
+                    try {
+                        int lastResultId = resultSet.getInt(1);
+
+                        updateRating.setObject(1, raceParticipant.getRating());
+                        updateRating.setInt(2, lastResultId);
+                        updateRating.execute();
+                    } catch (SQLException ignored) {
+
+                    }
+
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
         }
 
         runnerDirectory = new TreeMap<>(runnerDirectory);
@@ -143,18 +169,18 @@ public class Rankings implements Serializable {
      *               in the race.
      * @param loser A Person object for the lower placing individual.
      */
-    public static void newRankings(Person winner, Person loser) {
-        double Pb = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRanking() - loser.getRanking()) / 400)));
+    public static void newRatings(Person winner, Person loser) {
+        double Pb = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRating() - loser.getRating()) / 400)));
         double Pa = 1 - Pb;
 
         float winnerK = 100f / winner.getRaces();
         float loserK = 100f / loser.getRaces();
 
-        double Ra = winner.getRanking() + winnerK * (1 - Pa);
-        double Rb = loser.getRanking() + loserK * (-Pb);
+        double Ra = winner.getRating() + winnerK * (1 - Pa);
+        double Rb = loser.getRating() + loserK * (-Pb);
 
-        winner.setRanking(Ra);
-        loser.setRanking(Rb);
+        winner.setRating(Ra);
+        loser.setRating(Rb);
     }
 
     /**
@@ -167,9 +193,9 @@ public class Rankings implements Serializable {
 
         for (Person runner : runners) {
             if (runner.getGenderName().equals("Boys")) {
-                sortedRankingsBoys.put(runner.getRanking(), runner.getFullName());
+                sortedRankingsBoys.put(runner.getRating(), runner.getFullName());
             } else {
-                sortedRankingsGirls.put(runner.getRanking(), runner.getFullName());
+                sortedRankingsGirls.put(runner.getRating(), runner.getFullName());
             }
         }
     }
@@ -206,23 +232,6 @@ public class Rankings implements Serializable {
             e.printStackTrace();
         }
 
-//        Map<Double, String> results = RankingsSerializer.LoadSortedRankings(sex);
-//
-//        List<Double> ratings = new ArrayList<>(results.keySet());
-//
-//        Collections.reverse(ratings);
-//
-//        Map<Double, String> product = new TreeMap<>();
-//
-//        if (endIndex > ratings.size()) {
-//            endIndex = ratings.size();
-//        }
-//
-//        for (int i = pageLength * page - pageLength; i < endIndex; i++) {
-//            product.put(ratings.get(i), results.get(ratings.get(i)));
-//        }
-//
-//        return product;
         return null;
     }
 
