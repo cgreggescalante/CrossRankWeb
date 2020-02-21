@@ -33,6 +33,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ * The MeetIndex Class provides a way to locate and store the meetIds along
+ * with the respective resultIds.
+ */
+
 public class MeetIndex implements Serializable {
     private static String meetIdRegex = "(?<=meets/)[\\d]+(?=/results)";
     private static Pattern meetIdPattern = Pattern.compile(meetIdRegex, Pattern.MULTILINE);
@@ -48,13 +53,16 @@ public class MeetIndex implements Serializable {
     }
 
     /**
-     * Gathers meets for each month in a given year
+     * Gathers meets for the Cross Coutnry Running season in a given year.
+     * The season is defined as being the months August through December.
      * @param year Integer denoting which year to gather meets from.
      */
     public void CompileSeason(int year) {
         System.out.println("COMPILING MEETS FROM YEAR : " + year);
 
         LoadingBar loadingBar = new LoadingBar(50, 5);
+
+        /* For months August through December */
 
         Map<Integer, List<Integer>> month;
 
@@ -80,36 +88,39 @@ public class MeetIndex implements Serializable {
         List<Integer> meetIds = new ArrayList<>();
         int prevLength;
         int page = 1;
-        String content;
+        String html;
 
         do {
             prevLength = meetIds.size();
 
-            content = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
+            /* Retrieves the HTML for the results list of the given month and year */
+            html = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
 
-            meetIds.addAll(GatherData(content));
+            /* Extracts all the meetIds from the HTML and adds to the meetIds List */
+            meetIds.addAll(GatherMeetIds(html));
 
             page++;
-        } while (meetIds.size() != prevLength);
+        } while (meetIds.size() != prevLength); /* Ends once a page is found with no meetIds on it */
 
+        /* Retreives the resultIds for eash of the meetIds */
         return GetResultIds(meetIds);
     }
 
     /**
-     * Locates all the meetIds on the MileSplit meet results page.
-     * @param content A string containing the HTML for the page.
-     * @return A list of Integer meetIds.
+     * Extracts all meetIds from the given HTML content.
+     * @param html A string containing the HTML for the page.
+     * @return A List of Integer meetIds.
      */
-    public static List<Integer> GatherData(String content) {
-        Matcher matcher = meetIdPattern.matcher(content);
+    public static List<Integer> GatherMeetIds(String html) {
+        Matcher matcher = meetIdPattern.matcher(html);
 
-        List<Integer> data = new ArrayList<>();
+        List<Integer> meetIds = new ArrayList<>();
 
         while (matcher.find()) {
-            data.add(Integer.parseInt(matcher.group(0).strip()));
+            meetIds.add(Integer.parseInt(matcher.group(0).strip()));
         }
 
-        return data;
+        return meetIds;
     }
 
     /**
