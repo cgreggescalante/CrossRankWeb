@@ -34,6 +34,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MeetIndex implements Serializable {
+    private static String meetIdRegex = "(?<=meets/)[\\d]+(?=/results)";
+    private static Pattern meetIdPattern = Pattern.compile(meetIdRegex, Pattern.MULTILINE);
+
+    private static String resultIdRegex = "(?<=results/)[\\d]+";
+    private static Pattern resultIdPattern = Pattern.compile(resultIdRegex, Pattern.MULTILINE);
+
     @Getter
     private Map<Integer, List<Integer>> meets;
 
@@ -50,8 +56,10 @@ public class MeetIndex implements Serializable {
 
         LoadingBar loadingBar = new LoadingBar(50, 5);
 
+        Map<Integer, List<Integer>> month;
+
         for (int i = 8; i < 13; i++) {
-            Map<Integer, List<Integer>> month = CompileMonth(i, year);
+            month = CompileMonth(i, year);
 
             loadingBar.updateProgress();
             meets.putAll(month);
@@ -72,11 +80,12 @@ public class MeetIndex implements Serializable {
         List<Integer> meetIds = new ArrayList<>();
         int prevLength;
         int page = 1;
+        String content;
 
         do {
             prevLength = meetIds.size();
 
-            String content = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
+            content = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
 
             meetIds.addAll(GatherData(content));
 
@@ -92,9 +101,7 @@ public class MeetIndex implements Serializable {
      * @return A list of Integer meetIds.
      */
     public static List<Integer> GatherData(String content) {
-        String regex = "(?<=meets/)[\\d]+(?=/results)";
-        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = meetIdPattern.matcher(content);
 
         List<Integer> data = new ArrayList<>();
 
@@ -112,22 +119,22 @@ public class MeetIndex implements Serializable {
      * resultIds as values.
      */
     public static Map<Integer, List<Integer>> GetResultIds(List<Integer> meetIds) {
+        List<Integer> data;
+        String content;
+        int newData;
+
         Map<Integer, List<Integer>> resultIds = new HashMap<>();
 
         for (int meetId : meetIds) {
-            String content = HttpRequester.Get("https://www.milesplit.com/meets/"+meetId+"/results");
+            content = HttpRequester.Get("https://www.milesplit.com/meets/"+meetId+"/results");
 
-            List<Integer> data = new ArrayList<>();
+            data = new ArrayList<>();
 
             if (content != null) {
-                String regex = "(?<=results/)[\\d]+";
-                Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                Matcher matcher = pattern.matcher(content);
+                Matcher resultIdMatcher = resultIdPattern.matcher(content);
 
-
-
-                while (matcher.find()) {
-                    int newData = Integer.parseInt(matcher.group(0).strip());
+                while (resultIdMatcher.find()) {
+                    newData = Integer.parseInt(resultIdMatcher.group(0).strip());
                     if (!data.contains(newData)) {
                         data.add(newData);
                     }

@@ -32,6 +32,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.Serializable;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public class MeetResults implements Serializable {
             boolean added = false;
             for (Race race : races) {
                 if (result.getMeetName().equals(race.getMeetName()) &&
-                        result.getGenderName().equals(race.getSex())) {
+                        result.getGenderName().equals(race.getGender())) {
                     race.addResult(result);
                     added = true;
                     break;
@@ -115,6 +116,55 @@ public class MeetResults implements Serializable {
                 races.add(newRace);
             }
         }
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crossrank", "PotatoTax", "PotatoTax1707")) {
+
+                Statement statement = conn.createStatement();
+
+                PreparedStatement insertRunner = conn.prepareStatement("INSERT INTO runner(id, first_name, last_name, gender, rating) VALUES (?, ?, ?, ?, ?)");
+                PreparedStatement insertMeet = conn.prepareStatement("INSERT INTO meet (milesplit_meet_id, milesplit_result_id, name, gender, date) VALUES (?, ?, ?, ?, ?)");
+                PreparedStatement insertResult = conn.prepareStatement("INSERT INTO result (meet_id, runner_id, place, mark) VALUES (?, ?, ?, ?)");
+
+                for (Race race : races) {
+                    insertMeet.setString(1, Integer.toString(race.getMeetId()));
+                    insertMeet.setString(2, Long.toString(race.getResultId()));
+                    insertMeet.setString(3, race.getMeetName());
+                    insertMeet.setString(4, race.getGender());
+                    insertMeet.setString(5, race.getMeetDateString());
+                    insertMeet.execute();
+
+                    ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID()");
+                    resultSet.next();
+                    long id = resultSet.getLong("last_insert_id()");
+
+                    for (Result result : race.getResults()) {
+                        ResultSet resultSet1 = statement.executeQuery("SELECT * from runner WHERE id = " + result.getAthleteId());
+
+                        if (!resultSet1.next()) { // if runner does not exist, add to table
+                            insertRunner.setString(1, result.getAthleteId());
+                            insertRunner.setString(2, result.getFirstName());
+                            insertRunner.setString(3, result.getLastName());
+                            insertRunner.setString(4, result.getGenderName());
+                            insertRunner.setObject(5, result.getRating());
+                            insertRunner.execute();
+                        }
+
+                        insertResult.setLong(1, id);
+                        insertResult.setString(2, result.getAthleteId());
+                        insertResult.setString(3, result.getPlace());
+                        insertResult.setObject(4, result.getMarkDouble());
+                        insertResult.execute();
+                    }
+                }
+            }
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+
 
         return races;
     }

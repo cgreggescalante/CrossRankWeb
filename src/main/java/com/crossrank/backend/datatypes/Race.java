@@ -34,21 +34,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Race implements Serializable {
-    @Getter private String meetName;
-    @Getter private String division;
-    @Getter private String sex;
-    @Getter private List<Result> results;
+    private String meetName;
+    private String division;
+    private String gender;
+    private List<Result> results;
     private int meetId;
-    @Getter private int meetDate;
-    @Getter private long id;
+    private int meetDate;
+    private String meetDateString;
+    private long resultId;
 
     public Race(Result result) {
         meetName = result.getMeetName();
         division = result.getDivisionName();
-        sex = result.getGenderName();
+        gender = result.getGenderName();
         meetId = Integer.parseInt(result.getMeetId());
-        id = result.getResultsId();
+        resultId = result.getResultsId();
 
         try {
             String content = HttpRequester.Get("https://mn.milesplit.com/api/v1/meets/" + meetId);
@@ -56,6 +58,7 @@ public class Race implements Serializable {
             JSONObject meetData = (JSONObject) response.get("data");
 
             String date = (String) meetData.get("dateStart");
+            meetDateString = date;
             meetDate = Integer.parseInt(date.replace("-", ""));
 
         } catch (ParseException e) {

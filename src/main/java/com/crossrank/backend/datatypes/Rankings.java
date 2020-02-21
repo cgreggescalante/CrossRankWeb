@@ -27,8 +27,10 @@ package com.crossrank.backend.datatypes;
 import com.crossrank.LoadingBar;
 import com.crossrank.backend.serialization.RankingsSerializer;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.sql.*;
 import java.util.*;
 
 public class Rankings implements Serializable {
@@ -60,6 +62,27 @@ public class Rankings implements Serializable {
         }
 
         loadingBar.end();
+
+        updateDatabaseRatings();
+    }
+
+    private void updateDatabaseRatings() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crossrank", "PotatoTax", "PotatoTax1707")) {
+
+                PreparedStatement updateRating = conn.prepareStatement("UPDATE runner SET rating = ? where id = ?");
+
+                for (Person runner : runners) {
+                    updateRating.setObject(1, runner.getRanking());
+                    updateRating.setString(2, Integer.toString(runner.getId()));
+                    updateRating.execute();
+                }
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -160,24 +183,47 @@ public class Rankings implements Serializable {
      * @return A TreeMap with Double ratings and String names.
      */
     public static Map<Double, String> GetRankings(int page, int pageLength, String sex) {
-        Map<Double, String> results = RankingsSerializer.LoadSortedRankings(sex);
-
-        List<Double> ratings = new ArrayList<>(results.keySet());
-
-        Collections.reverse(ratings);
-
-        Map<Double, String> product = new TreeMap<>();
-
         int endIndex = page * pageLength;
+        int startIndex = pageLength * (page - 1);
 
-        if (endIndex > ratings.size()) {
-            endIndex = ratings.size();
-        }
-        for (int i = pageLength * page - pageLength; i < endIndex; i++) {
-            product.put(ratings.get(i), results.get(ratings.get(i)));
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crossrank", "PotatoTax", "PotatoTax1707")) {
+                Statement getRankings = conn.createStatement();
+
+                ResultSet resultSet = getRankings.executeQuery("SELECT first_name, last_name, rating FROM (SELECT ROW_NUMBER() over (ORDER BY rating DESC, first_name) row_num, first_name, last_name, rating, gender FROM runner WHERE gender = '" + sex + "') t WHERE row_num > " + startIndex + " AND row_num <= " + endIndex);
+
+                Map<Double, String> rankings = new TreeMap<>();
+
+                while (resultSet.next()) {
+                    rankings.put(resultSet.getDouble(3), resultSet.getString(1) + " " + resultSet.getString(2));
+                }
+
+                return rankings;
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
         }
 
-        return product;
+//        Map<Double, String> results = RankingsSerializer.LoadSortedRankings(sex);
+//
+//        List<Double> ratings = new ArrayList<>(results.keySet());
+//
+//        Collections.reverse(ratings);
+//
+//        Map<Double, String> product = new TreeMap<>();
+//
+//        if (endIndex > ratings.size()) {
+//            endIndex = ratings.size();
+//        }
+//
+//        for (int i = pageLength * page - pageLength; i < endIndex; i++) {
+//            product.put(ratings.get(i), results.get(ratings.get(i)));
+//        }
+//
+//        return product;
+        return null;
     }
 
     private Person getPerson(Result result) {

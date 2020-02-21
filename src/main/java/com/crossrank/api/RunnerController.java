@@ -36,7 +36,7 @@ public class RunnerController {
 
     @CrossOrigin(origins = "http://localhost:9000")
     @GetMapping("/api/runners")
-    public Person person(@RequestParam(required = false, defaultValue = "Conor Gregg Escalante") String name) {
-        return CrossRank.GetPerson(name);
+    public Person person(@RequestParam() String firstName, @RequestParam() String lastName) {
+        return CrossRank.GetPerson(firstName + " " + lastName);
     }
 }

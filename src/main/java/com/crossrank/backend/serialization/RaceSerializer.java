@@ -35,7 +35,7 @@ public class RaceSerializer {
     public static void SaveRaces(List<Race> races) {
         for (Race r : races) {
             try {
-                FileOutputStream file = new FileOutputStream("src\\main\\resources\\races\\" + r.getId() + ".txt");
+                FileOutputStream file = new FileOutputStream("src\\main\\resources\\races\\" + r.getResultId() + ".txt");
                 ObjectOutputStream out = new ObjectOutputStream(file);
 
                 out.writeObject(r);

@@ -32,24 +32,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class  Person implements Serializable {
-    @Getter
+@Getter
+public class Person implements Serializable {
     private final String firstName;
-    @Getter
     private final String lastName;
-    @Getter
     private final String genderName;
 
-    @Getter
     @Setter
     private double ranking;
 
-    @Getter
     private int races;
-    @Getter
     private final int id;
 
-    @Getter
     private final List<Result> results;
 
     public Person(Result result) {

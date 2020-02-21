@@ -36,8 +36,13 @@
         <div class="w3-main" style="margin-left:300px;margin-top:43px;">
             <div class="w3-container">
                 <label>
-                    Name:
-                    <input id="nameEntry" type="text">
+                    First Name:
+                    <input id="firstNameEntry" type="text">
+                </label>
+
+                <label>
+                    Last Name:
+                    <input id="lastNameEntry" type="text">
                 </label>
 
                 <input type="button" onclick="getRunner()" value="Submit">
@@ -96,7 +101,7 @@
                             for (let i = response["results"].length - 1; i >= 0; i--) {
                                 const item = "<tr><td style='width: 70%'>" + response["results"][i]["meetName"] + "</td>" +
                                     "<td style='width: 10%;'>" + response["results"][i]["place"] + "</td>" +
-                                    "<td style='width: 20%;'>" + Math.round(response["results"][i]["rating"]) + "</td></tr>";
+                                    "<td style='width: 20%;'>" + response["results"][i]["rating"] + "</td></tr>";
                                 table += item;
                             }
                             table += "</table>";
@@ -105,9 +110,10 @@
                     }
                 };
 
-                const name = document.getElementById("nameEntry")["value"];
+                const firstName = document.getElementById("firstNameEntry")["value"];
+                const lastName = document.getElementById("lastNameEntry")["value"];
 
-                const url = "http://localhost:8080/api/runners?name=" + name;
+                const url = "http://localhost:8080/api/runners?firstName=" + firstName + "&lastName=" + lastName;
 
                 xmlHttpRequest.open("GET", url, true);
                 xmlHttpRequest.send();
