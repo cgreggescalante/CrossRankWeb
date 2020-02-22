@@ -83,7 +83,7 @@ public class MeetIndex implements Serializable {
         do {
             prevLength = meetIds.size();
             
-            /* Retreives the HTML for the results list of the given month and year */
+            /* Retrieves the HTML for the results list of the given month and year */
             String html = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
             
             /* Extracts all the meetIds from the HTML and adds to the meetIds List */
@@ -92,7 +92,7 @@ public class MeetIndex implements Serializable {
             page++;
         } while (meetIds.size() != prevLength); /* Ends once a page is found with no meetIds on it */
         
-        /* Retreives the resultIds for eash of the meetIds */
+        /* Retrieves the resultIds for each of the meetIds */
         return GetResultIds(meetIds);
     }
 
@@ -129,7 +129,7 @@ public class MeetIndex implements Serializable {
 
             List<Integer> resultIds = new ArrayList<>();
 
-            if (content != null) {
+            if (html != null) {
                 String regex = "(?<=results/)[\\d]+";
                 Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
                 Matcher matcher = pattern.matcher(html);

@@ -60,6 +60,8 @@ public class Rankings implements Serializable {
         }
 
         loadingBar.end();
+
+        CreateSortedRankings();
     }
 
     /**
