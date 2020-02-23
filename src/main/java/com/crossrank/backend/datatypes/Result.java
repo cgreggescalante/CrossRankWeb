@@ -30,45 +30,47 @@ import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 
+/**
+ * Result class is used to store the data from an individual's performance at a race
+ * Implements Serializable for saving to a file
+ */
+@Getter
 public class Result implements Serializable {
-    @Getter
     private final String eventCode;
-    @Getter
     private final String gender;
-    @Getter
     private final String place;
-    @Getter
     private final String firstName;
-    @Getter
     private final String lastName;
-    @Getter
     private final String meetName;
-    @Getter
     private final String divisionName;
-    @Getter
     private final String genderName;
-    @Getter
     private final String mark;
-    @Getter
     private final String state;
-    @Getter
     private final String meetId;
-    @Getter
     private final String athleteId;
 
-    @Getter
     private final int resultsId;
 
+    /*
+     * Annotation means that fullName() is ran once, then the value is cached for later use.
+     * Prevents repetitive calls.
+     */
     @Getter(lazy = true)
     private final String fullName = fullName();
 
-    @Getter
     private double markDouble;
-    @Getter
     @Setter
     private double rating;
 
+    /**
+     * @param data a JSONObject containing the data of a single race result retrieved from MileSplit
+     * @param resultsId an Integer of the MileSplit identifier tied to the race's results
+     */
     public Result(JSONObject data, int resultsId) {
+        /*
+         * Extracts the data from the JSONObject into the Result's fields.
+         * The result of the data.get() method is a generic Object which must be cast to a String
+         */
         eventCode = (String) data.get("eventCode");
         gender = (String) data.get("gender");
         place = (String) data.get("place");
@@ -81,16 +83,21 @@ public class Result implements Serializable {
         state = (String) data.get("state");
         meetId = (String) data.get("meetId");
         athleteId = (String) data.get("athleteId");
+
         this.resultsId = resultsId;
 
+        /* Attempts to parse the time in format mm:ss to a double of seconds */
         try {
             markDouble = Integer.parseInt(mark.substring(0, 2)) * 60
                     + Double.parseDouble(mark.substring(3));
         } catch (NumberFormatException e) {
+
+            /* Prints the JSONObject data and defaults the markDouble to 0 if parsing fails*/
             System.out.println(data);
             markDouble = 0;
         }
 
+        /* Rating value is initialized at 1300 */
         rating = 1300;
     }
 
