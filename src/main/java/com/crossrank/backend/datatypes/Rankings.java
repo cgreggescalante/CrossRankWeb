@@ -31,16 +31,13 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.*;
 
+@Getter
 public class Rankings implements Serializable {
-    @Getter
     private List<Person> runners;
 
-    @Getter
     private Map<String, Integer> runnerDirectory;
 
-    @Getter
     private Map<Double, String> sortedRankingsBoys;
-    @Getter
     private Map<Double, String> sortedRankingsGirls;
 
     public Rankings() {
@@ -49,9 +46,17 @@ public class Rankings implements Serializable {
         runnerDirectory = new TreeMap<>();
     }
 
+    /**
+     * Iterates though the List of Races and updates the participant's
+     * ratings based on their results, then generates rankings.
+     *
+     * @param races a List of Race objects in chronological order
+     */
     public void ScoreRaces(List<Race> races) {
         System.out.println("SCORING MEETS");
 
+        // a CLI loading bar is used to provide visual indication to the progress being made.
+        // Also provides a rough estimate of the remaining time.
         LoadingBar loadingBar = new LoadingBar(50,  races.size());
 
         for (Race race : races) {
@@ -67,32 +72,43 @@ public class Rankings implements Serializable {
     /**
      * Performs the ELO Rating algorithm on a race's results.
      * Updates each individuals rating.
+     *
      * @param race - a Race object to be scored.
      */
     public void ScoreRace(Race race) {
-
         List<Person> raceParticipants = new ArrayList<>();
-        for (Result result : race.getResults()) {
-            Person runner = getPerson(result);
 
+        for (Result result : race.getResults()) {   // Iterates through the Race's results.
+            Person runner = getPerson(result);      // Attempts to find a Person object with the same name as the Result.
+
+            /*
+             * If no such Person exists, a new Person is created and added to the runnerDirectory and the runners List.
+             */
             if (runner == null) {
                 runner = new Person(result);
                 runnerDirectory.put(runner.getFullName(), runner.getId());
                 runners.add(runner);
             } else {
+                // if the Person does exist, the result is added to the Person's results List.
                 runner.addResult(result);
             }
 
+            // The Person is added to the List of raceParticipants.
             raceParticipants.add(runner);
         }
 
+        // The raceParticipants List is sorted by race times.
         raceParticipants.sort(Comparator.comparing(Person::getRecentMark));
 
+        // Each Person's raceCount value is increased by 1.
         for (Person raceParticipant : raceParticipants) {
             raceParticipant.addRace();
         }
 
-        for (int i = 0; i < raceParticipants.size(); i++) {
+        /*
+         * ELO Rating Algorithm
+         */
+        for (int i = 0; i < raceParticipants.size(); i++) {     // Iterates through each runner.
             Person current = raceParticipants.get(i);
 
             for (int j = 0; j < i; j++) {
@@ -123,14 +139,15 @@ public class Rankings implements Serializable {
      * @param loser A Person object for the lower placing individual.
      */
     public static void newRankings(Person winner, Person loser) {
-        double Pb = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRanking() - loser.getRanking()) / 400)));
-        double Pa = 1 - Pb;
+        // Uses the Persons' initial ratings to TODO : Finish documentation
+        double probabilityB = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRanking() - loser.getRanking()) / 400)));
+        double probabilityA = 1 - probabilityB;
 
         float winnerK = 100f / winner.getRaceCount();
         float loserK = 100f / loser.getRaceCount();
 
-        double Ra = winner.getRanking() + winnerK * (1 - Pa);
-        double Rb = loser.getRanking() + loserK * (-Pb);
+        double Ra = winner.getRanking() + winnerK * (1 - probabilityA);
+        double Rb = loser.getRanking() + loserK * (-probabilityB);
 
         winner.setRanking(Ra);
         loser.setRanking(Rb);
