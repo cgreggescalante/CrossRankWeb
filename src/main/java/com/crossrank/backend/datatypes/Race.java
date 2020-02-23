@@ -34,21 +34,38 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Race object carries identifying information about a race, as well as
+ * results in the form of a List of Result objects.
+ */
+@Getter
 public class Race implements Serializable {
-    @Getter private String meetName;
-    @Getter private String division;
-    @Getter private String sex;
-    @Getter private List<Result> results;
-    private int meetId;
-    @Getter private int meetDate;
-    @Getter private long id;
+    private final String meetName;
+    private final String division;
+    private final String sex;
 
+    private int meetDate;
+
+    private final long id;
+
+    private List<Result> results;
+
+    /**
+     * @param result A Result object which is the first Result from this race which has been found
+     */
     public Race(Result result) {
         meetName = result.getMeetName();
         division = result.getDivisionName();
         sex = result.getGenderName();
-        meetId = Integer.parseInt(result.getMeetId());
         id = result.getResultsId();
+
+        results = new ArrayList<>();
+
+        /*
+         * Uses the meetId to retrieve additional information on the meet.
+         * Attempts to parse the date of the meet.
+         */
+        int meetId = Integer.parseInt(result.getMeetId());
 
         try {
             String content = HttpRequester.Get("https://mn.milesplit.com/api/v1/meets/" + meetId);
@@ -61,10 +78,11 @@ public class Race implements Serializable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        results = new ArrayList<>();
     }
 
+    /**
+     * @param newResult A Result to be added to the Race's results List
+     */
     public void addResult(Result newResult) {
         results.add(newResult);
     }
