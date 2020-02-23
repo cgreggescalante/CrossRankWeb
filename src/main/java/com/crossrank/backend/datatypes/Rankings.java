@@ -126,8 +126,8 @@ public class Rankings implements Serializable {
         double Pb = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRanking() - loser.getRanking()) / 400)));
         double Pa = 1 - Pb;
 
-        float winnerK = 100f / winner.getRaces();
-        float loserK = 100f / loser.getRaces();
+        float winnerK = 100f / winner.getRaceCount();
+        float loserK = 100f / loser.getRaceCount();
 
         double Ra = winner.getRanking() + winnerK * (1 - Pa);
         double Rb = loser.getRanking() + loserK * (-Pb);
