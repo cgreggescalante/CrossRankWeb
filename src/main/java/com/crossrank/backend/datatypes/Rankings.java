@@ -31,6 +31,10 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Rankings class handles the storing of all Person objects
+ * and generating the ratings using the ELO algorithms
+ */
 @Getter
 public class Rankings implements Serializable {
     private List<Person> runners;
@@ -111,20 +115,25 @@ public class Rankings implements Serializable {
         for (int i = 0; i < raceParticipants.size(); i++) {     // Iterates through each runner.
             Person current = raceParticipants.get(i);
 
+            /*
+             * Iterates though each lower-placing runner
+             */
             for (int j = 0; j < i; j++) {
                 Person other = raceParticipants.get(j);
-
-                newRankings(other, current);
+                newRankings(other, current);                    // Updates ratings
             }
 
-            for (int j = i+1; j < raceParticipants.size(); j++) {
+            /*
+             * Iterates though each higher-placing runner
+             */
+            for (int j = i+1; j < raceParticipants.size(); j++) {  // Iterates through each
                 Person other = raceParticipants.get(j);
                 newRankings(current, other);
             }
         }
 
         for (Person participant : raceParticipants) {
-            double currentRating = participant.getRanking();
+            double currentRating = participant.getRating();
             int lastResult = participant.getResults().size() - 1;
             participant.getResults().get(lastResult).setRating(currentRating);
         }
@@ -134,23 +143,29 @@ public class Rankings implements Serializable {
 
     /**
      * Updates the two Person's ratings based on the difference in initial rating.
+     *
+     *
      * @param winner A Person object for the individual who placed higher
      *               in the race.
      * @param loser A Person object for the lower placing individual.
      */
     public static void newRankings(Person winner, Person loser) {
-        // Uses the Persons' initial ratings to TODO : Finish documentation
-        double probabilityB = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRanking() - loser.getRanking()) / 400)));
+        // Uses the Persons' initial ratings to calculate the probability that each will win
+        double probabilityB = 1.0f * 1.0f / (1 + 1.0f * (float)(Math.pow(10, 1.0f * (winner.getRating() - loser.getRating()) / 400)));
         double probabilityA = 1 - probabilityB;
 
+        // Generates K values for each individual based on the number of races they have done
+        // The K value is the maximum change in rating that can occur
         float winnerK = 100f / winner.getRaceCount();
         float loserK = 100f / loser.getRaceCount();
 
-        double Ra = winner.getRanking() + winnerK * (1 - probabilityA);
-        double Rb = loser.getRanking() + loserK * (-probabilityB);
+        // Calculates the new ratings based on the K values and
+        double Ra = winner.getRating() + winnerK * (1 - probabilityA);
+        double Rb = loser.getRating() + loserK * (-probabilityB);
 
-        winner.setRanking(Ra);
-        loser.setRanking(Rb);
+        // Updates the ratings of the two Persons
+        winner.setRating(Ra);
+        loser.setRating(Rb);
     }
 
     /**
@@ -163,43 +178,66 @@ public class Rankings implements Serializable {
 
         for (Person runner : runners) {
             if (runner.getGenderName().equals("Boys")) {
-                sortedRankingsBoys.put(runner.getRanking(), runner.getFullName());
+                sortedRankingsBoys.put(runner.getRating(), runner.getFullName());
             } else {
-                sortedRankingsGirls.put(runner.getRanking(), runner.getFullName());
+                sortedRankingsGirls.put(runner.getRating(), runner.getFullName());
             }
         }
     }
 
     /**
-     * Given the section and sex, returns the names and ratings of all runners
+     * Given the page number, length, and gender, returns the names and ratings of all runners
      * who fall in the area.
+     *
      * @param page Integer denoting the section the rankings will come from.
      * @param pageLength Integer denoting the number of runners on each page.
-     * @param sex String denoting the sex to be ranked
+     * @param gender String denoting the gender to be ranked
      * @return A TreeMap with Double ratings and String names.
      */
-    public static Map<Double, String> GetRankings(int page, int pageLength, String sex) {
-        Map<Double, String> results = RankingsSerializer.LoadSortedRankings(sex);
-
+    public static Map<Double, String> GetRankings(int page, int pageLength, String gender) {
+        // Loads the sorted rankings of the specified gender, creates a List from the rating values
+        Map<Double, String> results = RankingsSerializer.LoadSortedRankings(gender);
         List<Double> ratings = new ArrayList<>(results.keySet());
 
+        /*
+         * TreeMaps are sorted with the keys in ascending order, but the higher ratings should be at
+         * the top of the rankings, so they must be reversed.
+         */
         Collections.reverse(ratings);
 
-        Map<Double, String> product = new TreeMap<>();
+        Map<Double, String> rankingsPage = new TreeMap<>();
 
         int endIndex = page * pageLength;
+        int startIndex = pageLength * page - pageLength;
 
+        /*
+         * To avoid NullPointerExceptions, if the value of the endIndex is greater than the size of the ratings
+         * the endIndex is set to the size of the ratings.
+         */
         if (endIndex > ratings.size()) {
             endIndex = ratings.size();
         }
-        for (int i = pageLength * page - pageLength; i < endIndex; i++) {
-            product.put(ratings.get(i), results.get(ratings.get(i)));
+
+        // TODO - document
+        for (int i = startIndex; i < endIndex; i++) {
+            rankingsPage.put(ratings.get(i), results.get(ratings.get(i)));
         }
 
-        return product;
+        return rankingsPage;
     }
 
+    /**
+     * Takes a Result object and attempts to find an existing Person object
+     * which TODO - finish
+     *
+     * @param result a Result object for which to find the associated Person
+     * @return A Person object
+     */
     private Person getPerson(Result result) {
+        /*
+         * Iterates through the runners List
+         * Returns the Person with matching name and gender
+         */
         for (Person p : runners) {
             if (p.getFullName().equals(result.getFullName()) && p.getGenderName().equalsIgnoreCase(result.getGenderName())) {
                 return p;

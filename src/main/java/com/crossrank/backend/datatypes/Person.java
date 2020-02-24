@@ -44,7 +44,7 @@ public class Person implements Serializable {
     private final String genderName;
 
     @Setter
-    private double ranking;
+    private double rating;
 
     private int raceCount;
     private final int id;
@@ -64,7 +64,7 @@ public class Person implements Serializable {
         results = new ArrayList<>();
         results.add(result);
 
-        ranking = 1000;
+        rating = 1000;
         raceCount = 0;
     }
 
@@ -77,7 +77,7 @@ public class Person implements Serializable {
         fullName = "No athlete by that name was found.";
         genderName = null;
 
-        ranking = -1;
+        rating = -1;
         raceCount = -1;
     }
 
