@@ -35,6 +35,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles gathering race results and storing the Race objects
+ */
 public class MeetResults implements Serializable {
     @Getter
     private List<Race> races;
@@ -43,6 +46,7 @@ public class MeetResults implements Serializable {
         races = new ArrayList<>();
     }
 
+    // The list of fields to be gathered for each result
     private final static String[] fields = new String[] {
             "state",
             "meetName",
@@ -58,7 +62,13 @@ public class MeetResults implements Serializable {
             "athleteId"
     };
 
-    public static List<Race> GetRaces(int meetId, List<Integer> resultIds, long raceIdCounter) {
+    /**
+     * Takes a TODO - finish
+     * @param meetId An Integer identifier for the meet
+     * @param resultIds List of Integers which are the identifiers for each race
+     * @return A List of Race objects
+     */
+    public static List<Race> GetRaces(int meetId, List<Integer> resultIds) {
 
         List<Result> results = new ArrayList<>();
 
@@ -110,7 +120,6 @@ public class MeetResults implements Serializable {
             }
             if (!added) {
                 Race newRace = new Race(result);
-                raceIdCounter++;
                 newRace.addResult(result);
                 races.add(newRace);
             }
