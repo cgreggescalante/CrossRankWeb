@@ -30,6 +30,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Handles the GET request used in many classes in the application.
+ */
 public class HttpRequester {
     public static String Get(String urlString) {
         try {
