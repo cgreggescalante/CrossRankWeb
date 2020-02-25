@@ -42,7 +42,7 @@ import java.util.List;
 public class Race implements Serializable {
     private final String meetName;
     private final String division;
-    private final String sex;
+    private final String gender;
 
     private int meetDate;
 
@@ -56,7 +56,7 @@ public class Race implements Serializable {
     public Race(Result result) {
         meetName = result.getMeetName();
         division = result.getDivisionName();
-        sex = result.getGenderName();
+        gender = result.getGenderName();
         id = result.getResultsId();
 
         results = new ArrayList<>();

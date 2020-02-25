@@ -63,7 +63,10 @@ public class MeetResults implements Serializable {
     };
 
     /**
-     * Takes a TODO - finish
+     * Takes a meet Id and the result Ids for each race at the meet, and returns a List of
+     * Race objects containing the results for each race. Gathers result by making calls
+     * to the MileSplit API
+     *
      * @param meetId An Integer identifier for the meet
      * @param resultIds List of Integers which are the identifiers for each race
      * @return A List of Race objects
@@ -72,15 +75,18 @@ public class MeetResults implements Serializable {
 
         List<Result> results = new ArrayList<>();
 
+        // Gathers the results from each race
         for (int resultsId : resultIds) {
             StringBuilder url = new StringBuilder();
 
+            // Generating the URL for the API call
             url.append("https://mn.milesplit.com/api/v1/meets/")
                     .append(meetId)
                     .append("/performances?resultsId=")
                     .append(resultsId)
                     .append("&fields=");
 
+            // Adds each of the desired fields to the URL
             for (int i = 0; i < fields.length-1; i++) {
                 url.append(fields[i])
                         .append("%2C");
@@ -91,11 +97,15 @@ public class MeetResults implements Serializable {
             String content = HttpRequester.Get(url.toString());
 
             try {
+                // Parses the JSONObject, extracts the results array
                 JSONObject jsonObject = (JSONObject) new JSONParser().parse(content);
                 JSONArray jsonArray = (JSONArray) jsonObject.get("data");
 
+                // Creates Result objects from the JSONArray of the results
                 for (Object o : jsonArray) {
                     JSONObject obj = (JSONObject) o;
+
+                    // Only adds the Result if it came from a 5000m race ran by a Minnesota runner
                     if (obj.get("state").equals("MN") && obj.get("eventCode").equals("5000m") && ((String) obj.get("mark")).length() < 10) {
                         Result result = new Result(obj, resultsId);
                         results.add(result);
@@ -108,11 +118,16 @@ public class MeetResults implements Serializable {
 
         List<Race> races = new ArrayList<>();
 
+        /*
+         * Attempts to find the corresponding Race for each Result.
+         * If the Race is found, the Result is added to the Race,
+         * otherwise, a new Race is created from the data contained in the Result.
+         */
         for (Result result : results) {
             boolean added = false;
             for (Race race : races) {
                 if (result.getMeetName().equals(race.getMeetName()) &&
-                        result.getGenderName().equals(race.getSex())) {
+                        result.getGenderName().equals(race.getGender())) {
                     race.addResult(result);
                     added = true;
                     break;
