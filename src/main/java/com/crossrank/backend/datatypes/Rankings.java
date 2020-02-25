@@ -25,6 +25,7 @@
 package com.crossrank.backend.datatypes;
 
 import com.crossrank.LoadingBar;
+import com.crossrank.backend.serialization.PersonSerializer;
 import com.crossrank.backend.serialization.RankingsSerializer;
 import lombok.Getter;
 
@@ -126,7 +127,7 @@ public class Rankings implements Serializable {
             /*
              * Iterates though each higher-placing runner
              */
-            for (int j = i+1; j < raceParticipants.size(); j++) {  // Iterates through each
+            for (int j = i+1; j < raceParticipants.size(); j++) {
                 Person other = raceParticipants.get(j);
                 newRankings(current, other);
             }
@@ -218,7 +219,7 @@ public class Rankings implements Serializable {
             endIndex = ratings.size();
         }
 
-        // TODO - document
+        // Adds the names and ratings into the rankingsPage Map
         for (int i = startIndex; i < endIndex; i++) {
             rankingsPage.put(ratings.get(i), results.get(ratings.get(i)));
         }
@@ -228,7 +229,7 @@ public class Rankings implements Serializable {
 
     /**
      * Takes a Result object and attempts to find an existing Person object
-     * which TODO - finish
+     * which matches the name and gender of the Result
      *
      * @param result a Result object for which to find the associated Person
      * @return A Person object
@@ -244,5 +245,28 @@ public class Rankings implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Given a name, loads the runner directory and locates the Person
+     * object with the name.
+     *
+     * @param name The name of the Person to find
+     * @return the Person object matching the name provided
+     */
+    public static Person getPerson(String name) {
+
+        Map<String, Integer> runnerDirectory = RankingsSerializer.LoadRunnerDirectory();
+
+        try {
+            if (runnerDirectory != null) {
+                int id = runnerDirectory.get(name);
+                return PersonSerializer.LoadRunner(id);
+            }
+        } catch (NullPointerException e) {
+            return new Person();
+        }
+
+        return new Person();
     }
 }

@@ -33,13 +33,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
+/**
  * The MeetIndex Class provides a way to locate and store the meetIds along
  * with the respective resultIds.
  */
-
+@Getter
 public class MeetIndex implements Serializable {
-    @Getter
     private Map<Integer, List<Integer>> meets;
 
     public MeetIndex() {
