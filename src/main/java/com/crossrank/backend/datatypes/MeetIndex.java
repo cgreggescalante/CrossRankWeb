@@ -33,29 +33,30 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * The MeetIndex Class provides a way to locate and store the meetIds along
- * with the respective resultIds.
- */
-@Getter
 public class MeetIndex implements Serializable {
+    /*
+     * Patterns are made static because they wll be used frequently, and compiling a pattern is an expensive
+     * operation and should not be repeated more than necessary.
+     */
+    private static Pattern meetIdPattern = Pattern.compile("(?<=meets/)[\\d]+(?=/results)", Pattern.MULTILINE);
+    private static Pattern resultIdPattern = Pattern.compile("(?<=results/)[\\d]+", Pattern.MULTILINE);
+
+    @Getter
     private Map<Integer, List<Integer>> meets;
 
-    public MeetIndex() {
-        meets = new TreeMap<>();
-    }
-
     /**
-     * Gathers meets for the Cross Coutnry Running season in a given year.
+     * Gathers meets for the Cross Country Running season in a given year.
      * The season is defined as being the months August through December.
      * @param year Integer denoting which year to gather meets from.
      */
     public void CompileSeason(int year) {
         System.out.println("COMPILING MEETS FROM YEAR : " + year);
 
+        meets = new TreeMap<>();
+
         LoadingBar loadingBar = new LoadingBar(50, 5);
         
-        /* For months August through December */
+        // For months August through December
         for (int i = 8; i <= 12; i++) {
             Map<Integer, List<Integer>> month = CompileMonth(i, year);
 
@@ -64,7 +65,6 @@ public class MeetIndex implements Serializable {
         }
 
         loadingBar.end();
-
     }
 
     /**
@@ -82,16 +82,17 @@ public class MeetIndex implements Serializable {
         do {
             prevLength = meetIds.size();
             
-            /* Retrieves the HTML for the results list of the given month and year */
-            String html = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month + "&year=" + year + "&level=hs&page=" + page);
+            // Retrieves the HTML for the results list of the given month and year
+            String html = HttpRequester.Get("https://mn.milesplit.com/results?month=" + month +
+                    "&year=" + year + "&level=hs&page=" + page);
             
-            /* Extracts all the meetIds from the HTML and adds to the meetIds List */
+            // Extracts all the meetIds from the HTML and adds to the meetIds List
             meetIds.addAll(GatherMeetIds(html));
         
             page++;
-        } while (meetIds.size() != prevLength); /* Ends once a page is found with no meetIds on it */
+        } while (meetIds.size() != prevLength); // Ends once a page is found with no meetIds on it
         
-        /* Retrieves the resultIds for each of the meetIds */
+        // Retrieves the resultIds for each of the meetIds
         return GetResultIds(meetIds);
     }
 
@@ -101,14 +102,12 @@ public class MeetIndex implements Serializable {
      * @return A List of Integer meetIds.
      */
     public static List<Integer> GatherMeetIds(String html) {
-        String regex = "(?<=meets/)[\\d]+(?=/results)";
-        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(html);
+        Matcher meetIdMatcher = meetIdPattern.matcher(html);
 
         List<Integer> meetIds = new ArrayList<>();
 
-        while (matcher.find()) {
-            meetIds.add(Integer.parseInt(matcher.group(0).strip()));
+        while (meetIdMatcher.find()) {
+            meetIds.add(Integer.parseInt(meetIdMatcher.group(0).strip()));
         }
 
         return meetIds;
@@ -129,23 +128,17 @@ public class MeetIndex implements Serializable {
             List<Integer> resultIds = new ArrayList<>();
 
             if (html != null) {
-                String regex = "(?<=results/)[\\d]+";
-                Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                Matcher matcher = pattern.matcher(html);
+                Matcher resultIdMatcher = resultIdPattern.matcher(html);
 
-
-
-                while (matcher.find()) {
-                    int newResultId = Integer.parseInt(matcher.group(0).strip());
+                while (resultIdMatcher.find()) {
+                    int newResultId = Integer.parseInt(resultIdMatcher.group(0).strip());
                     if (!resultIds.contains(newResultId)) {
                         resultIds.add(newResultId);
                     }
                 }
             }
-
             meetData.put(meetId, resultIds);
         }
-
         return meetData;
     }
 }

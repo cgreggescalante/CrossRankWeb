@@ -35,9 +35,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handles gathering race results and storing the Race objects
- */
 public class MeetResults implements Serializable {
     @Getter
     private List<Race> races;
@@ -63,7 +60,7 @@ public class MeetResults implements Serializable {
     };
 
     /**
-     * Takes a meet Id and the result Ids for each race at the meet, and returns a List of
+     * Takes a meetId and the resultIds for each race at the meet, and returns a List of
      * Race objects containing the results for each race. Gathers result by making calls
      * to the MileSplit API
      *
@@ -106,7 +103,10 @@ public class MeetResults implements Serializable {
                     JSONObject obj = (JSONObject) o;
 
                     // Only adds the Result if it came from a 5000m race ran by a Minnesota runner
-                    if (obj.get("state").equals("MN") && obj.get("eventCode").equals("5000m") && ((String) obj.get("mark")).length() < 10) {
+                    if (obj.get("state").equals("MN") &&
+                        obj.get("eventCode").equals("5000m") &&
+                        ((String) obj.get("mark")).length() < 10) {
+
                         Result result = new Result(obj, resultsId);
                         results.add(result);
                     }

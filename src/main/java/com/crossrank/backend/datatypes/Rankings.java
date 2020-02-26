@@ -32,10 +32,6 @@ import lombok.Getter;
 import java.io.Serializable;
 import java.util.*;
 
-/**
- * Rankings class handles the storing of all Person objects
- * and generating the ratings using the ELO algorithms
- */
 @Getter
 public class Rankings implements Serializable {
     private List<Person> runners;
@@ -44,12 +40,6 @@ public class Rankings implements Serializable {
 
     private Map<Double, String> sortedRankingsBoys;
     private Map<Double, String> sortedRankingsGirls;
-
-    public Rankings() {
-        runners = new ArrayList<>();
-
-        runnerDirectory = new TreeMap<>();
-    }
 
     /**
      * Iterates though the List of Races and updates the participant's
@@ -82,6 +72,8 @@ public class Rankings implements Serializable {
      */
     public void ScoreRace(Race race) {
         List<Person> raceParticipants = new ArrayList<>();
+        runners = new ArrayList<>();
+        runnerDirectory = new TreeMap<>();
 
         for (Result result : race.getResults()) {   // Iterates through the Race's results.
             Person runner = getPerson(result);      // Attempts to find a Person object with the same name as the Result.
