@@ -36,18 +36,18 @@ import java.io.Serializable;
  */
 @Getter
 public class Result implements Serializable {
+    private final String athleteId;
+    private final String divisionName;
     private final String eventCode;
-    private final String gender;
-    private final String place;
     private final String firstName;
     private final String lastName;
-    private final String meetName;
-    private final String divisionName;
+    private final String gender;
     private final String genderName;
+    private final String place;
+    private final String meetName;
     private final String mark;
     private final String state;
     private final String meetId;
-    private final String athleteId;
 
     private final int resultsId;
 

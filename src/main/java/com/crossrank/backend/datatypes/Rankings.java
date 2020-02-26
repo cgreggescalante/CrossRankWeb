@@ -130,13 +130,10 @@ public class Rankings implements Serializable {
             int lastResult = participant.getResults().size() - 1;
             participant.getResults().get(lastResult).setRating(currentRating);
         }
-
-        runnerDirectory = new TreeMap<>(runnerDirectory);
     }
 
     /**
      * Updates the two Person's ratings based on the difference in initial rating.
-     *
      *
      * @param winner A Person object for the individual who placed higher
      *               in the race.
