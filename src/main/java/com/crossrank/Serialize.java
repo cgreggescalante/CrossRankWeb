@@ -26,6 +26,7 @@ public class Serialize {
                 System.out.println("map");
                 Map map = (Map) object;
                 System.out.println(map.keySet().toArray()[0].getClass());
+                System.out.println(String.class);
                 if (map.keySet().toArray()[0].getClass() == String.class) {
                     fileOutputName = "map1.txt";
                 }
